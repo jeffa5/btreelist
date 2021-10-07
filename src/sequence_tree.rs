@@ -4,6 +4,13 @@ use std::{
     mem,
 };
 
+/// The default sequence tree.
+///
+/// This provides a b-tree with a fixed `b` parameter.
+///
+/// It may be worth benchmarking your use case and trying to use a [`Box<T>`](Box) instead of a plain `T`
+/// as this can improve performance in some cases.
+/// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).
 pub type SequenceTree<T> = SequenceTreeInternal<T, 25>;
 
 #[derive(Clone, Debug)]
@@ -13,7 +20,7 @@ pub struct SequenceTreeInternal<T, const B: usize> {
 
 #[derive(Clone, Debug, PartialEq)]
 struct SequenceTreeNode<T, const B: usize> {
-    elements: Vec<Box<T>>,
+    elements: Vec<T>,
     children: Vec<SequenceTreeNode<T, B>>,
     length: usize,
 }
@@ -84,7 +91,7 @@ where
             }
         } else {
             self.root_node = Some(SequenceTreeNode {
-                elements: vec![Box::new(element)],
+                elements: vec![element],
                 children: Vec::new(),
                 length: 1,
             })
@@ -129,7 +136,7 @@ where
 
             #[cfg(debug_assertions)]
             debug_assert_eq!(len, self.root_node.as_ref().map_or(0, |r| r.check()) + 1);
-            *old
+            old
         } else {
             panic!("remove from empty tree")
         }
@@ -187,7 +194,7 @@ where
         assert!(!self.is_full());
         if self.is_leaf() {
             self.length += 1;
-            self.elements.insert(index, Box::new(element));
+            self.elements.insert(index, element);
         } else {
             let (child_index, sub_index) = self.find_child_index(index);
             let child = &mut self.children[child_index];
@@ -251,12 +258,12 @@ where
         assert_eq!(original_len_self, self.len());
     }
 
-    fn remove_from_leaf(&mut self, index: usize) -> Box<T> {
+    fn remove_from_leaf(&mut self, index: usize) -> T {
         self.length -= 1;
         self.elements.remove(index)
     }
 
-    fn remove_element_from_non_leaf(&mut self, index: usize, element_index: usize) -> Box<T> {
+    fn remove_element_from_non_leaf(&mut self, index: usize, element_index: usize) -> T {
         self.length -= 1;
         if self.children[element_index].elements.len() >= B {
             let total_index = self.cumulative_index(element_index);
@@ -287,7 +294,7 @@ where
             .sum()
     }
 
-    fn remove_from_internal_child(&mut self, index: usize, mut child_index: usize) -> Box<T> {
+    fn remove_from_internal_child(&mut self, index: usize, mut child_index: usize) -> T {
         if self.children[child_index].elements.len() < B
             && if child_index > 0 {
                 self.children[child_index - 1].elements.len() < B
@@ -380,7 +387,7 @@ where
         l
     }
 
-    pub fn remove(&mut self, index: usize) -> Box<T> {
+    pub fn remove(&mut self, index: usize) -> T {
         let original_len = self.len();
         if self.is_leaf() {
             let v = self.remove_from_leaf(index);
@@ -423,7 +430,7 @@ where
         }
     }
 
-    fn merge(&mut self, middle: Box<T>, successor_sibling: SequenceTreeNode<T, B>) {
+    fn merge(&mut self, middle: T, successor_sibling: SequenceTreeNode<T, B>) {
         self.elements.push(middle);
         self.elements.extend(successor_sibling.elements);
         self.children.extend(successor_sibling.children);
@@ -433,7 +440,7 @@ where
 
     pub fn set(&mut self, index: usize, element: T) -> T {
         if self.is_leaf() {
-            let old_element = &mut **self.elements.get_mut(index).unwrap();
+            let old_element = self.elements.get_mut(index).unwrap();
             mem::replace(old_element, element)
         } else {
             let mut cumulative_len = 0;
@@ -443,7 +450,7 @@ where
                         cumulative_len += child.len() + 1;
                     }
                     Ordering::Equal => {
-                        let old_element = &mut **self.elements.get_mut(child_index).unwrap();
+                        let old_element = self.elements.get_mut(child_index).unwrap();
                         return mem::replace(old_element, element);
                     }
                     Ordering::Greater => {
@@ -457,7 +464,7 @@ where
 
     pub fn get(&self, index: usize) -> Option<&T> {
         if self.is_leaf() {
-            return self.elements.get(index).map(|b| &**b);
+            return self.elements.get(index);
         } else {
             let mut cumulative_len = 0;
             for (child_index, child) in self.children.iter().enumerate() {
@@ -466,7 +473,7 @@ where
                         cumulative_len += child.len() + 1;
                     }
                     Ordering::Equal => {
-                        return self.elements.get(child_index).map(|b| &**b);
+                        return self.elements.get(child_index);
                     }
                     Ordering::Greater => {
                         return child.get(index - cumulative_len);
@@ -479,7 +486,7 @@ where
 
     pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
         if self.is_leaf() {
-            return self.elements.get_mut(index).map(|b| &mut **b);
+            return self.elements.get_mut(index);
         } else {
             let mut cumulative_len = 0;
             for (child_index, child) in self.children.iter_mut().enumerate() {
@@ -488,7 +495,7 @@ where
                         cumulative_len += child.len() + 1;
                     }
                     Ordering::Equal => {
-                        return self.elements.get_mut(child_index).map(|b| &mut **b);
+                        return self.elements.get_mut(child_index);
                     }
                     Ordering::Greater => {
                         return child.get_mut(index - cumulative_len);
