@@ -601,7 +601,7 @@ rec {
         crateName = "sequence-tree";
         version = "0.1.0";
         edition = "2018";
-        src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
+        src = lib.cleanSourceWith { filter = sourceFilter;  src = ./crates/sequence-tree; };
         devDependencies = [
           {
             name = "proptest";

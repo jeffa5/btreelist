@@ -1,10 +1,4 @@
-[package]
-name = "sequence-tree"
-version = "0.1.0"
-edition = "2018"
-license = "MIT"
-
-[dependencies]
-
-[dev-dependencies]
-proptest = "1.0.0"
+[workspace]
+members = [
+  "crates/*"
+]
