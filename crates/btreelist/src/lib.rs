@@ -26,6 +26,8 @@
 
 mod btreelist;
 mod iter;
+mod owned_iter;
 
 pub use crate::btreelist::BTreeList;
 pub use crate::iter::Iter;
+pub use crate::owned_iter::OwnedIter;

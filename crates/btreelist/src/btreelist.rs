@@ -5,7 +5,7 @@ use std::{
     mem,
 };
 
-use crate::Iter;
+use crate::{Iter, OwnedIter};
 
 const B: usize = 6;
 
@@ -104,11 +104,32 @@ impl<T> BTreeList<T> {
         self.insert(l, element)
     }
 
+    /// Push the `element` onto the back of the list.
+    pub fn push_back(&mut self, element: T) {
+        let l = self.len();
+        self.insert(l, element)
+    }
+
+    /// Push the `element` onto the front of the list.
+    pub fn push_front(&mut self, element: T) {
+        self.insert(0, element)
+    }
+
     /// Remove and return the last element from the list, if there is one.
-    pub fn pop(&mut self) -> Option<T> {
+    pub fn pop_back(&mut self) -> Option<T> {
         if !self.is_empty() {
             // SAFETY: should always have an element to remove when len is positive
             Some(self.remove(self.len() - 1))
+        } else {
+            None
+        }
+    }
+
+    /// Remove and return the first element from the list, if there is one.
+    pub fn pop_front(&mut self) -> Option<T> {
+        if !self.is_empty() {
+            // SAFETY: should always have an element to remove when len is positive
+            Some(self.remove(0))
         } else {
             None
         }
@@ -562,10 +583,20 @@ impl<'a, T> IntoIterator for &'a BTreeList<T> {
     }
 }
 
+impl<T> IntoIterator for BTreeList<T> {
+    type Item = T;
+
+    type IntoIter = OwnedIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        OwnedIter { inner: self }
+    }
+}
+
 impl<T> Extend<T> for BTreeList<T> {
     fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
         for item in iter {
-            self.push(item)
+            self.push_back(item)
         }
     }
 }
@@ -574,7 +605,7 @@ impl<T> FromIterator<T> for BTreeList<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut l = BTreeList::new();
         for item in iter {
-            l.push(item);
+            l.push_back(item);
         }
         l
     }
@@ -589,14 +620,14 @@ mod tests {
     fn push_back() {
         let mut t = BTreeList::new();
 
-        t.push(());
-        t.push(());
-        t.push(());
-        t.push(());
-        t.push(());
-        t.push(());
-        t.push(());
-        t.push(());
+        t.push_back(());
+        t.push_back(());
+        t.push_back(());
+        t.push_back(());
+        t.push_back(());
+        t.push_back(());
+        t.push_back(());
+        t.push_back(());
     }
 
     #[test]
@@ -638,11 +669,11 @@ mod tests {
     fn iter_forth_back() {
         let mut t = BTreeList::new();
 
-        t.push(1);
-        t.push(2);
-        t.push(3);
-        t.push(4);
-        t.push(5);
+        t.push_back(1);
+        t.push_back(2);
+        t.push_back(3);
+        t.push_back(4);
+        t.push_back(5);
 
         let mut i = t.iter();
         assert_eq!(i.next(), Some(&1));
@@ -680,9 +711,9 @@ mod tests {
     #[test]
     fn first_last() {
         let mut t = BTreeList::new();
-        t.push(1);
-        t.push(2);
-        t.push(3);
+        t.push_back(1);
+        t.push_back(2);
+        t.push_back(3);
 
         assert_eq!(t.first(), Some(&1));
         assert_eq!(t.first_mut(), Some(&mut 1));
@@ -694,14 +725,14 @@ mod tests {
     fn pop() {
         let mut t = BTreeList::new();
 
-        t.push(1);
-        t.push(2);
-        t.push(3);
+        t.push_back(1);
+        t.push_back(2);
+        t.push_back(3);
 
-        assert_eq!(t.pop(), Some(3));
-        assert_eq!(t.pop(), Some(2));
-        assert_eq!(t.pop(), Some(1));
-        assert_eq!(t.pop(), None);
+        assert_eq!(t.pop_back(), Some(3));
+        assert_eq!(t.pop_back(), Some(2));
+        assert_eq!(t.pop_back(), Some(1));
+        assert_eq!(t.pop_back(), None);
     }
 
     #[cfg(release)]
