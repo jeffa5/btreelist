@@ -13,7 +13,6 @@ const B: usize = 6;
 /// It may be worth benchmarking your use case and trying to use a [`Box<T>`](Box) instead of a plain `T`
 /// as this can improve performance in some cases.
 /// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).
-
 #[derive(Clone, Debug)]
 pub struct SequenceTree<T> {
     root_node: Option<SequenceTreeNode<T>>,
@@ -50,6 +49,7 @@ where
         Iter {
             inner: self,
             index: 0,
+            index_back: self.len(),
         }
     }
 
@@ -538,6 +538,7 @@ where
         Iter {
             inner: self,
             index: 0,
+            index_back: self.len(),
         }
     }
 }
@@ -545,6 +546,7 @@ where
 pub struct Iter<'a, T> {
     inner: &'a SequenceTree<T>,
     index: usize,
+    index_back: usize,
 }
 
 impl<'a, T> Iterator for Iter<'a, T>
@@ -554,8 +556,26 @@ where
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.index += 1;
-        self.inner.get(self.index - 1)
+        if self.index < self.index_back {
+            self.index += 1;
+            self.inner.get(self.index - 1)
+        } else {
+            None
+        }
+    }
+}
+
+impl<'a, T> DoubleEndedIterator for Iter<'a, T>
+where
+    T: Clone + Debug,
+{
+    fn next_back(&mut self) -> Option<Self::Item> {
+        if self.index < self.index_back {
+            self.index_back -= 1;
+            self.inner.get(self.index_back)
+        } else {
+            None
+        }
     }
 }
 
@@ -611,6 +631,49 @@ mod tests {
 
             assert_eq!(v, t.iter().copied().collect::<Vec<_>>())
         }
+    }
+
+    #[test]
+    fn iter_forth_back() {
+        let mut t = SequenceTree::new();
+
+        t.push(1);
+        t.push(2);
+        t.push(3);
+        t.push(4);
+        t.push(5);
+
+        let mut i = t.iter();
+        assert_eq!(i.next(), Some(&1));
+        assert_eq!(i.next(), Some(&2));
+        assert_eq!(i.next(), Some(&3));
+        assert_eq!(i.next(), Some(&4));
+        assert_eq!(i.next(), Some(&5));
+        assert_eq!(i.next(), None);
+
+        let mut i = t.iter();
+        assert_eq!(i.next_back(), Some(&5));
+        assert_eq!(i.next_back(), Some(&4));
+        assert_eq!(i.next_back(), Some(&3));
+        assert_eq!(i.next_back(), Some(&2));
+        assert_eq!(i.next_back(), Some(&1));
+        assert_eq!(i.next_back(), None);
+
+        let mut i = t.iter();
+        assert_eq!(i.next(), Some(&1));
+        assert_eq!(i.next_back(), Some(&5));
+        assert_eq!(i.next_back(), Some(&4));
+        assert_eq!(i.next_back(), Some(&3));
+        assert_eq!(i.next_back(), Some(&2));
+        assert_eq!(i.next_back(), None);
+
+        let mut i = t.iter();
+        assert_eq!(i.next(), Some(&1));
+        assert_eq!(i.next(), Some(&2));
+        assert_eq!(i.next(), Some(&3));
+        assert_eq!(i.next(), Some(&4));
+        assert_eq!(i.next_back(), Some(&5));
+        assert_eq!(i.next_back(), None);
     }
 
     fn arb_indices() -> impl Strategy<Value = Vec<usize>> {
