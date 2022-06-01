@@ -21,10 +21,7 @@ struct BTreeListNode<T> {
     length: usize,
 }
 
-impl<T> BTreeList<T>
-where
-    T: Clone + Debug,
-{
+impl<T> BTreeList<T> {
     /// Construct a new, empty, list.
     pub fn new() -> Self {
         Self { root_node: None }
@@ -93,7 +90,7 @@ where
                 length: 1,
             })
         }
-        assert_eq!(self.len(), old_len + 1, "{:#?}", self);
+        assert_eq!(self.len(), old_len + 1);
     }
 
     /// Push the `element` onto the back of the list.
@@ -149,10 +146,7 @@ where
     }
 }
 
-impl<T> BTreeListNode<T>
-where
-    T: Clone + Debug,
-{
+impl<T> BTreeListNode<T> {
     fn new() -> Self {
         Self {
             elements: Vec::new(),
@@ -250,7 +244,7 @@ where
 
         self.elements.insert(full_child_index, middle);
 
-        assert_eq!(full_child_len + z_len + 1, original_len, "{:#?}", self);
+        assert_eq!(full_child_len + z_len + 1, original_len);
 
         assert_eq!(original_len_self, self.len());
     }
@@ -379,7 +373,7 @@ where
 
     fn check(&self) -> usize {
         let l = self.elements.len() + self.children.iter().map(|c| c.check()).sum::<usize>();
-        assert_eq!(self.len(), l, "{:#?}", self);
+        assert_eq!(self.len(), l);
 
         l
     }
@@ -504,10 +498,7 @@ where
     }
 }
 
-impl<T> Default for BTreeList<T>
-where
-    T: Clone + Debug,
-{
+impl<T> Default for BTreeList<T> {
     fn default() -> Self {
         Self::new()
     }
@@ -515,17 +506,14 @@ where
 
 impl<T> PartialEq for BTreeList<T>
 where
-    T: Clone + Debug + PartialEq,
+    T: PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
         self.len() == other.len() && self.iter().zip(other.iter()).all(|(a, b)| a == b)
     }
 }
 
-impl<'a, T> IntoIterator for &'a BTreeList<T>
-where
-    T: Clone + Debug,
-{
+impl<'a, T> IntoIterator for &'a BTreeList<T> {
     type Item = &'a T;
 
     type IntoIter = Iter<'a, T>;
@@ -545,10 +533,7 @@ pub struct Iter<'a, T> {
     index_back: usize,
 }
 
-impl<'a, T> Iterator for Iter<'a, T>
-where
-    T: Clone + Debug,
-{
+impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -561,10 +546,7 @@ where
     }
 }
 
-impl<'a, T> DoubleEndedIterator for Iter<'a, T>
-where
-    T: Clone + Debug,
-{
+impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
     fn next_back(&mut self) -> Option<Self::Item> {
         if self.index < self.index_back {
             self.index_back -= 1;
