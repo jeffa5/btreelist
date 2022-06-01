@@ -1,106 +1,105 @@
 use btree_vec::BTreeVec;
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use sequence_tree::SequenceTree;
 
-fn push_vec(n: u64) {
-    let mut v = Vec::new();
-    for i in 0..n {
-        v.push(i);
-    }
+macro_rules! push {
+    ($name:ident, $v:ident) => {
+        paste::item! {
+            fn [< push_ $name >] (n: u64) {
+                let mut v = $v::new();
+                for i in 0..n {
+                    v.push(i);
+                }
+            }
+        }
+    };
 }
 
-fn push_st(n: u64) {
-    let mut v = SequenceTree::new();
-    for i in 0..n {
-        v.push(i);
-    }
+macro_rules! insert {
+    ($name:ident, $v:ident) => {
+        paste::item! {
+            fn [< insert_ $name >] (n: u64) {
+                let mut v = $v::new();
+                for i in 0..n {
+                    v.insert(0, i);
+                }
+            }
+        }
+    };
 }
 
-fn push_btreevec(n: u64) {
-    let mut v = BTreeVec::new();
-    for i in 0..n {
-        v.push(i);
-    }
+macro_rules! remove {
+    ($name:ident, $v:ident) => {
+        paste::item! {
+            fn [< remove_ $name >] (n: u64) {
+                let mut v = $v::new();
+                for i in 0..n {
+                    v.push(i);
+                }
+                for _ in 0..n {
+                    v.remove(0);
+                }
+            }
+        }
+    };
 }
 
-fn insert_vec(n: u64) {
-    let mut v = Vec::new();
-    for i in 0..n {
-        v.insert(0, i);
-    }
+macro_rules! iter {
+    ($name:ident, $v:ident) => {
+        paste::item! {
+            fn [< iter_ $name >] (n: u64) {
+                let mut v = $v::new();
+                for i in 0..n {
+                    v.push(i);
+                }
+                v.iter().count();
+            }
+        }
+    };
 }
 
-fn insert_st(n: u64) {
-    let mut v = SequenceTree::new();
-    for i in 0..n {
-        v.insert(0, i);
-    }
+macro_rules! impls {
+    (($name:ident, $v:ident)) => {
+        push!($name, $v);
+        insert!($name, $v);
+        remove!($name, $v);
+        iter!($name, $v);
+    };
+    (($name:ident, $v:ident), $($others:tt),+) => {
+        impls!(($name, $v));
+        impls!($($others),+);
+    };
 }
 
-fn insert_btreevec(n: u64) {
-    let mut v = BTreeVec::new();
-    for i in 0..n {
-        v.insert(0, i);
-    }
-}
-
-fn remove_vec(n: u64) {
-    let mut v = Vec::new();
-    for i in 0..n {
-        v.push(i);
-    }
-    for _ in 0..n {
-        v.remove(0);
-    }
-}
-
-fn remove_st(n: u64) {
-    let mut v = SequenceTree::new();
-    for i in 0..n {
-        v.push(i);
-    }
-    for _ in 0..n {
-        v.remove(0);
-    }
-}
-
-fn remove_btreevec(n: u64) {
-    let mut v = BTreeVec::new();
-    for i in 0..n {
-        v.push(i);
-    }
-    for _ in 0..n {
-        v.remove(0);
-    }
-}
+impls![(vec, Vec), (sqt, SequenceTree), (btv, BTreeVec)];
 
 fn criterion_benchmark(c: &mut Criterion) {
-    let mut group = c.benchmark_group("push");
-    for size in [100, 1000, 10000] {
-        group.throughput(criterion::Throughput::Elements(size));
-        group.bench_with_input(BenchmarkId::new("vec", size), &size, |b, &size| {
-            b.iter(|| push_vec(size))
-        });
-        group.bench_with_input(BenchmarkId::new("sqt", size), &size, |b, &size| {
-            b.iter(|| push_st(size))
-        });
-        group.bench_with_input(BenchmarkId::new("btv", size), &size, |b, &size| {
-            b.iter(|| push_btreevec(size))
-        });
+    macro_rules! bg {
+        ($name:expr) => {
+            paste::item! {
+                let mut group = c.benchmark_group($name);
+                for size in [100, 1000, 10000] {
+                    group.throughput(criterion::Throughput::Elements(size));
+                    group.bench_with_input(BenchmarkId::new("vec", size), &size, |b, &size| {
+                        b.iter(|| [< $name _vec >] (size))
+                    });
+                    group.bench_with_input(BenchmarkId::new("sqt", size), &size, |b, &size| {
+                        b.iter(|| [< $name _sqt >] (size))
+                    });
+                    group.bench_with_input(BenchmarkId::new("btv", size), &size, |b, &size| {
+                        b.iter(|| [< $name _btv >] (size))
+                    });
+                }
+                group.finish();
+            };
+        };
+        ($name:expr, $($names:expr),+) => {
+            bg!($name);
+            bg!($($names),+)
+        }
     }
-    group.finish();
 
-    c.bench_function("insert vec 100", |b| b.iter(|| insert_vec(black_box(100))));
-    c.bench_function("insert st  100", |b| b.iter(|| insert_st(black_box(100))));
-    c.bench_function("insert btv 100", |b| {
-        b.iter(|| insert_btreevec(black_box(100)))
-    });
-
-    c.bench_function("remove vec 100", |b| b.iter(|| remove_vec(black_box(100))));
-    c.bench_function("remove st  100", |b| b.iter(|| remove_st(black_box(100))));
-    c.bench_function("remove btv 100", |b| {
-        b.iter(|| remove_btreevec(black_box(100)))
-    });
+    bg!("push", "insert", "remove", "iter");
 }
 
 criterion_group!(benches, criterion_benchmark);
