@@ -114,6 +114,26 @@ impl<T> BTreeList<T> {
         self.root_node.as_mut().and_then(|n| n.get_mut(index))
     }
 
+    /// Get the first element in the list if it exists.
+    pub fn first(&self) -> Option<&T> {
+        self.get(0)
+    }
+
+    /// Get the first element in the list if it exists.
+    pub fn first_mut(&mut self) -> Option<&mut T> {
+        self.get_mut(0)
+    }
+
+    /// Get the last element in the list if it exists.
+    pub fn last(&self) -> Option<&T> {
+        self.get(self.len() - 1)
+    }
+
+    /// Get the last element in the list if it exists.
+    pub fn last_mut(&mut self) -> Option<&mut T> {
+        self.get_mut(self.len() - 1)
+    }
+
     /// Removes the element at `index` from the list.
     ///
     /// # Panics
@@ -645,6 +665,19 @@ mod tests {
         assert_eq!(i.next(), Some(&4));
         assert_eq!(i.next_back(), Some(&5));
         assert_eq!(i.next_back(), None);
+    }
+
+    #[test]
+    fn first_last() {
+        let mut t = BTreeList::new();
+        t.push(1);
+        t.push(2);
+        t.push(3);
+
+        assert_eq!(t.first(), Some(&1));
+        assert_eq!(t.first_mut(), Some(&mut 1));
+        assert_eq!(t.last(), Some(&3));
+        assert_eq!(t.last_mut(), Some(&mut 3));
     }
 
     #[cfg(release)]
