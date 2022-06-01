@@ -60,6 +60,22 @@ macro_rules! remove {
     };
 }
 
+macro_rules! get {
+    ($name:ident, $v:ident) => {
+        paste::item! {
+            fn [< get_ $name >] (n: u64) {
+                let mut v = $v::new();
+                for i in 0..n {
+                    v.push(i);
+                }
+                for i in 0..n {
+                    let _ = v.get(i as usize);
+                }
+            }
+        }
+    };
+}
+
 macro_rules! iter {
     ($name:ident, $v:ident) => {
         paste::item! {
@@ -80,6 +96,7 @@ macro_rules! impls {
         pop!($name, $v);
         insert!($name, $v);
         remove!($name, $v);
+        get!($name, $v);
         iter!($name, $v);
     };
     (($name:ident, $v:ident), $($others:tt),+) => {
@@ -116,7 +133,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         }
     }
 
-    bg!("push", "pop", "insert", "remove", "iter");
+    bg!("push", "pop", "insert", "remove", "get", "iter");
 }
 
 criterion_group!(benches, criterion_benchmark);
