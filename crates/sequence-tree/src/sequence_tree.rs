@@ -13,21 +13,20 @@ const B: usize = 6;
 /// It may be worth benchmarking your use case and trying to use a [`Box<T>`](Box) instead of a plain `T`
 /// as this can improve performance in some cases.
 /// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).
-pub type SequenceTree<T> = SequenceTreeInternal<T, B>;
 
 #[derive(Clone, Debug)]
-pub struct SequenceTreeInternal<T, const B: usize> {
-    root_node: Option<SequenceTreeNode<T, B>>,
+pub struct SequenceTree<T> {
+    root_node: Option<SequenceTreeNode<T>>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
-struct SequenceTreeNode<T, const B: usize> {
+struct SequenceTreeNode<T> {
     elements: Vec<T>,
-    children: Vec<SequenceTreeNode<T, B>>,
+    children: Vec<SequenceTreeNode<T>>,
     length: usize,
 }
 
-impl<T, const B: usize> SequenceTreeInternal<T, B>
+impl<T> SequenceTree<T>
 where
     T: Clone + Debug,
 {
@@ -47,7 +46,7 @@ where
     }
 
     /// Create an iterator through the sequence.
-    pub fn iter(&self) -> Iter<'_, T, B> {
+    pub fn iter(&self) -> Iter<'_, T> {
         Iter {
             inner: self,
             index: 0,
@@ -154,7 +153,7 @@ where
     }
 }
 
-impl<T, const B: usize> SequenceTreeNode<T, B>
+impl<T> SequenceTreeNode<T>
 where
     T: Clone + Debug,
 {
@@ -432,7 +431,7 @@ where
         }
     }
 
-    fn merge(&mut self, middle: T, successor_sibling: SequenceTreeNode<T, B>) {
+    fn merge(&mut self, middle: T, successor_sibling: SequenceTreeNode<T>) {
         self.elements.push(middle);
         self.elements.extend(successor_sibling.elements);
         self.children.extend(successor_sibling.children);
@@ -509,7 +508,7 @@ where
     }
 }
 
-impl<T, const B: usize> Default for SequenceTreeInternal<T, B>
+impl<T> Default for SequenceTree<T>
 where
     T: Clone + Debug,
 {
@@ -518,7 +517,7 @@ where
     }
 }
 
-impl<T, const B: usize> PartialEq for SequenceTreeInternal<T, B>
+impl<T> PartialEq for SequenceTree<T>
 where
     T: Clone + Debug + PartialEq,
 {
@@ -527,13 +526,13 @@ where
     }
 }
 
-impl<'a, T, const B: usize> IntoIterator for &'a SequenceTreeInternal<T, B>
+impl<'a, T> IntoIterator for &'a SequenceTree<T>
 where
     T: Clone + Debug,
 {
     type Item = &'a T;
 
-    type IntoIter = Iter<'a, T, B>;
+    type IntoIter = Iter<'a, T>;
 
     fn into_iter(self) -> Self::IntoIter {
         Iter {
@@ -543,12 +542,12 @@ where
     }
 }
 
-pub struct Iter<'a, T, const B: usize> {
-    inner: &'a SequenceTreeInternal<T, B>,
+pub struct Iter<'a, T> {
+    inner: &'a SequenceTree<T>,
     index: usize,
 }
 
-impl<'a, T, const B: usize> Iterator for Iter<'a, T, B>
+impl<'a, T> Iterator for Iter<'a, T>
 where
     T: Clone + Debug,
 {
@@ -633,7 +632,7 @@ mod tests {
         #[test]
         #[cfg(release)]
         fn proptest_insert(indices in arb_indices()) {
-            let mut t = SequenceTreeInternal::<usize, 3>::new();
+            let mut t = SequenceTree::<usize, 3>::new();
             let mut v = Vec::new();
 
             for i in indices{
@@ -655,7 +654,7 @@ mod tests {
         #[test]
         #[cfg(release)]
         fn proptest_remove(inserts in arb_indices(), removes in arb_indices()) {
-            let mut t = SequenceTreeInternal::<usize, 3>::new();
+            let mut t = SequenceTree::<usize, 3>::new();
             let mut v = Vec::new();
 
             for i in inserts {
