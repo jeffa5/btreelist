@@ -4,6 +4,9 @@ version = "0.1.1"
 edition = "2018"
 license = "MIT"
 description = "A list data structure that has efficient insertion and removal in the middle."
+homepage = "https://github.com/jeffa5/btreelist"
+repository = "https://github.com/jeffa5/btreelist"
+documentation = "https://docs.rs/btreelist"
 
 [dependencies]
 
