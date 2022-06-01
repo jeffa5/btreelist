@@ -688,7 +688,6 @@
 <span id="683">683</span>
 <span id="684">684</span>
 <span id="685">685</span>
-<span id="686">686</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">cmp</span>::{<span class="ident">min</span>, <span class="ident">Ordering</span>},
     <span class="ident">fmt::Debug</span>,
@@ -704,21 +703,20 @@
 <span class="doccomment">/// It may be worth benchmarking your use case and trying to use a [`Box&lt;T&gt;`](Box) instead of a plain `T`</span>
 <span class="doccomment">/// as this can improve performance in some cases.</span>
 <span class="doccomment">/// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">SequenceTreeInternal</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SequenceTreeInternal</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> {
-    <span class="ident">root_node</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="ident">root_node</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">struct</span> <span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> {
+<span class="kw">struct</span> <span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="ident">elements</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
-    <span class="ident">children</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">children</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">length</span>: <span class="ident">usize</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> <span class="ident">SequenceTreeInternal</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span>,
 {
@@ -738,7 +736,7 @@
     }
 
     <span class="doccomment">/// Create an iterator through the sequence.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">T</span><span class="op">&gt;</span> {
         <span class="ident">Iter</span> {
             <span class="ident">inner</span>: <span class="self">self</span>,
             <span class="ident">index</span>: <span class="number">0</span>,
@@ -845,7 +843,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> <span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span>,
 {
@@ -1123,7 +1121,7 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">merge</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">middle</span>: <span class="ident">T</span>, <span class="ident">successor_sibling</span>: <span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">merge</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">middle</span>: <span class="ident">T</span>, <span class="ident">successor_sibling</span>: <span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) {
         <span class="self">self</span>.<span class="ident">elements</span>.<span class="ident">push</span>(<span class="ident">middle</span>);
         <span class="self">self</span>.<span class="ident">elements</span>.<span class="ident">extend</span>(<span class="ident">successor_sibling</span>.<span class="ident">elements</span>);
         <span class="self">self</span>.<span class="ident">children</span>.<span class="ident">extend</span>(<span class="ident">successor_sibling</span>.<span class="ident">children</span>);
@@ -1200,7 +1198,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">SequenceTreeInternal</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span>,
 {
@@ -1209,7 +1207,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">SequenceTreeInternal</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span> <span class="op">+</span> <span class="ident">PartialEq</span>,
 {
@@ -1218,13 +1216,13 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> <span class="ident">IntoIterator</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SequenceTreeInternal</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">IntoIterator</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span>,
 {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">T</span>;
 
-    <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) -&gt; <span class="ident"><span class="self">Self</span>::IntoIter</span> {
         <span class="ident">Iter</span> {
@@ -1234,12 +1232,12 @@
     }
 }
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> {
-    <span class="ident">inner</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SequenceTreeInternal</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="ident">inner</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">index</span>: <span class="ident">usize</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span>,
 {
@@ -1324,7 +1322,7 @@
         <span class="attribute">#[<span class="ident">test</span>]</span>
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">release</span>)]</span>
         <span class="kw">fn</span> <span class="ident">proptest_insert</span>(<span class="ident">indices</span> <span class="kw">in</span> <span class="ident">arb_indices</span>()) {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTreeInternal</span>::<span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">3</span><span class="op">&gt;</span><span class="ident">::new</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTree</span>::<span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">3</span><span class="op">&gt;</span><span class="ident">::new</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">indices</span>{
@@ -1346,7 +1344,7 @@
         <span class="attribute">#[<span class="ident">test</span>]</span>
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">release</span>)]</span>
         <span class="kw">fn</span> <span class="ident">proptest_remove</span>(<span class="ident">inserts</span> <span class="kw">in</span> <span class="ident">arb_indices</span>(), <span class="ident">removes</span> <span class="kw">in</span> <span class="ident">arb_indices</span>()) {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTreeInternal</span>::<span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">3</span><span class="op">&gt;</span><span class="ident">::new</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTree</span>::<span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">3</span><span class="op">&gt;</span><span class="ident">::new</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">inserts</span> {
