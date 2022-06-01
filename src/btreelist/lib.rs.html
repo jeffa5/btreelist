@@ -32,6 +32,8 @@
 <span id="27">27</span>
 <span id="28">28</span>
 <span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">forbid</span>(<span class="ident">unsafe_code</span>)]</span>
 <span class="attribute">#![<span class="ident">warn</span>(
     <span class="ident">missing_debug_implementations</span>,
@@ -59,8 +61,10 @@
 <span class="doccomment">//! See [`BTreeList`].</span>
 
 <span class="kw">mod</span> <span class="ident">btreelist</span>;
+<span class="kw">mod</span> <span class="ident">iter</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::btreelist</span>::{<span class="ident">BTreeList</span>, <span class="ident">Iter</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::btreelist::BTreeList</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::iter::Iter</span>;
 </code></pre></div>
 </section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="btreelist" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0 (fe5b13d68 2022-05-18)" ></div>
 </body></html>

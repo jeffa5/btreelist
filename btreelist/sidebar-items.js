@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["BTreeList","A list with efficient insert and removal in the middle."],["Iter","Iterator over items in a [`BTreeList`]."]]});
+initSidebarItems({"struct":[["BTreeList","A list with efficient insert and removal in the middle."],["Iter","An iterator over items in a [`BTreeList`]."]]});
