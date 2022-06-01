@@ -1,0 +1,4 @@
+var searchIndex = JSON.parse('{\
+"sequence_tree":{"doc":"","t":[3,6,11,11,11,11,11,11,11,11,11],"n":["Iter","SequenceTree","borrow","borrow_mut","from","into","into_iter","next","try_from","try_into","type_id"],"q":["sequence_tree","","","","","","","","","",""],"d":["","The default sequence tree.","","","Returns the argument unchanged.","Calls <code>U::from(self)</code>.","","","","",""],"i":[0,0,1,1,1,1,1,1,1,1,1],"f":[null,null,[[["",0]],["",0]],[[["",0]],["",0]],[[]],[[]],[[]],[[["",0]],["option",4]],[[],["result",4]],[[],["result",4]],[[["",0]],["typeid",3]]],"p":[[3,"Iter"]]}\
+}');
+if (window.initSearch) {window.initSearch(searchIndex)};

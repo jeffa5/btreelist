@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["sequence_tree"] = [{"text":"impl&lt;'a, T, const B:&nbsp;<a class=\"primitive\" href=\"https://doc.rust-lang.org/1.61.0/std/primitive.usize.html\">usize</a>&gt; Freeze for <a class=\"struct\" href=\"sequence_tree/struct.Iter.html\" title=\"struct sequence_tree::Iter\">Iter</a>&lt;'a, T, B&gt;","synthetic":true,"types":["sequence_tree::sequence_tree::Iter"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
