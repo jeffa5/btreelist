@@ -18,7 +18,7 @@
             inherit system;
           };
           lib = pkgs.lib;
-          rust = pkgs.rust-bin.nightly.latest.rust;
+          rust = pkgs.rust-bin.stable.latest.default;
           cargoNix = import ./Cargo.nix {
             inherit pkgs;
             release = true;
