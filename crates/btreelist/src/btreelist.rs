@@ -3,6 +3,7 @@ use std::{
     fmt::Debug,
     iter::FromIterator,
     mem,
+    ops::{Index, IndexMut},
 };
 
 use crate::{Iter, OwnedIter};
@@ -612,6 +613,20 @@ impl<T> FromIterator<T> for BTreeList<T> {
             l.push_back(item);
         }
         l
+    }
+}
+
+impl<T> Index<usize> for BTreeList<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        self.get(index).unwrap()
+    }
+}
+
+impl<T> IndexMut<usize> for BTreeList<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        self.get_mut(index).unwrap()
     }
 }
 
