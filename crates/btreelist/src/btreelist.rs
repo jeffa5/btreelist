@@ -6,6 +6,8 @@ use std::{
 
 const B: usize = 6;
 
+/// A list with efficient insert and removal in the middle.
+///
 /// It may be worth benchmarking your use case and trying to use a [`Box<T>`](Box) instead of a plain `T`
 /// as this can improve performance in some cases.
 /// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).
@@ -155,7 +157,7 @@ impl<T> BTreeListNode<T> {
         }
     }
 
-    pub fn len(&self) -> usize {
+    pub(crate) fn len(&self) -> usize {
         self.length
     }
 
@@ -378,7 +380,7 @@ impl<T> BTreeListNode<T> {
         l
     }
 
-    pub fn remove(&mut self, index: usize) -> T {
+    pub(crate) fn remove(&mut self, index: usize) -> T {
         let original_len = self.len();
         if self.is_leaf() {
             let v = self.remove_from_leaf(index);
@@ -429,7 +431,7 @@ impl<T> BTreeListNode<T> {
         assert!(self.is_full());
     }
 
-    pub fn set(&mut self, index: usize, element: T) -> T {
+    pub(crate) fn set(&mut self, index: usize, element: T) -> T {
         if self.is_leaf() {
             let old_element = self.elements.get_mut(index).unwrap();
             mem::replace(old_element, element)
@@ -453,7 +455,7 @@ impl<T> BTreeListNode<T> {
         }
     }
 
-    pub fn get(&self, index: usize) -> Option<&T> {
+    pub(crate) fn get(&self, index: usize) -> Option<&T> {
         if self.is_leaf() {
             return self.elements.get(index);
         } else {
@@ -475,7 +477,7 @@ impl<T> BTreeListNode<T> {
         None
     }
 
-    pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
+    pub(crate) fn get_mut(&mut self, index: usize) -> Option<&mut T> {
         if self.is_leaf() {
             return self.elements.get_mut(index);
         } else {
@@ -527,6 +529,8 @@ impl<'a, T> IntoIterator for &'a BTreeList<T> {
     }
 }
 
+/// Iterator over items in a [`BTreeList`].
+#[derive(Debug)]
 pub struct Iter<'a, T> {
     inner: &'a BTreeList<T>,
     index: usize,
@@ -654,6 +658,7 @@ mod tests {
         assert_eq!(i.next_back(), None);
     }
 
+    #[cfg(release)]
     fn arb_indices() -> impl Strategy<Value = Vec<usize>> {
         proptest::collection::vec(any::<usize>(), 0..1000).prop_map(|v| {
             let mut len = 0;
