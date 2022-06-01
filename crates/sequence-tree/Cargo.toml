@@ -8,3 +8,9 @@ license = "MIT"
 
 [dev-dependencies]
 proptest = "1.0.0"
+criterion = "0.3"
+btree-vec = "0.2.3"
+
+[[bench]]
+name = "vec"
+harness = false
