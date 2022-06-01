@@ -8,7 +8,55 @@
 <span id="3">3</span>
 <span id="4">4</span>
 <span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">forbid</span>(<span class="ident">unsafe_code</span>)]</span>
+<span class="attribute">#![<span class="ident">warn</span>(
+    <span class="ident">missing_debug_implementations</span>,
+    <span class="ident">missing_docs</span>, <span class="comment">// TODO: add documentation!</span>
+    <span class="ident">rust_2018_idioms</span>,
+    <span class="ident">unreachable_pub</span>,
+    <span class="ident">bad_style</span>,
+    <span class="ident">const_err</span>,
+    <span class="ident">dead_code</span>,
+    <span class="ident">improper_ctypes</span>,
+    <span class="ident">non_shorthand_field_patterns</span>,
+    <span class="ident">no_mangle_generic_items</span>,
+    <span class="ident">overflowing_literals</span>,
+    <span class="ident">path_statements</span>,
+    <span class="ident">patterns_in_fns_without_body</span>,
+    <span class="ident">private_in_public</span>,
+    <span class="ident">unconditional_recursion</span>,
+    <span class="ident">unused</span>,
+    <span class="ident">unused_allocation</span>,
+    <span class="ident">unused_comparisons</span>,
+    <span class="ident">unused_parens</span>,
+    <span class="ident">while_true</span>
+)]</span>
+
+<span class="doccomment">//! See [`BTreeList`].</span>
 
 <span class="kw">mod</span> <span class="ident">btreelist</span>;
 

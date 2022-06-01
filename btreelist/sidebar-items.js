@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["BTreeList","It may be worth benchmarking your use case and trying to use a `Box<T>` instead of a plain `T` as this can improve performance in some cases. Similar word-length wrapper types would also work e.g. `Rc`."],["Iter",""]]});
+initSidebarItems({"struct":[["BTreeList","A list with efficient insert and removal in the middle."],["Iter","Iterator over items in a [`BTreeList`]."]]});
