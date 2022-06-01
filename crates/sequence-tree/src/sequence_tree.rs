@@ -4,6 +4,8 @@ use std::{
     mem,
 };
 
+const B: usize = 6;
+
 /// The default sequence tree.
 ///
 /// This provides a b-tree with a fixed `b` parameter.
@@ -11,7 +13,7 @@ use std::{
 /// It may be worth benchmarking your use case and trying to use a [`Box<T>`](Box) instead of a plain `T`
 /// as this can improve performance in some cases.
 /// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).
-pub type SequenceTree<T> = SequenceTreeInternal<T, 25>;
+pub type SequenceTree<T> = SequenceTreeInternal<T, B>;
 
 #[derive(Clone, Debug)]
 pub struct SequenceTreeInternal<T, const B: usize> {
