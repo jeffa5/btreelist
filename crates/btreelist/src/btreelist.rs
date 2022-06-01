@@ -104,6 +104,16 @@ impl<T> BTreeList<T> {
         self.insert(l, element)
     }
 
+    /// Remove and return the last element from the list, if there is one.
+    pub fn pop(&mut self) -> Option<T> {
+        if !self.is_empty() {
+            // SAFETY: should always have an element to remove when len is positive
+            Some(self.remove(self.len() - 1))
+        } else {
+            None
+        }
+    }
+
     /// Get the `element` at `index` in the list.
     pub fn get(&self, index: usize) -> Option<&T> {
         self.root_node.as_ref().and_then(|n| n.get(index))
@@ -678,6 +688,20 @@ mod tests {
         assert_eq!(t.first_mut(), Some(&mut 1));
         assert_eq!(t.last(), Some(&3));
         assert_eq!(t.last_mut(), Some(&mut 3));
+    }
+
+    #[test]
+    fn pop() {
+        let mut t = BTreeList::new();
+
+        t.push(1);
+        t.push(2);
+        t.push(3);
+
+        assert_eq!(t.pop(), Some(3));
+        assert_eq!(t.pop(), Some(2));
+        assert_eq!(t.pop(), Some(1));
+        assert_eq!(t.pop(), None);
     }
 
     #[cfg(release)]
