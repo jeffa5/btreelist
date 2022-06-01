@@ -631,6 +631,7 @@ mod tests {
     proptest! {
 
         #[test]
+        #[cfg(release)]
         fn proptest_insert(indices in arb_indices()) {
             let mut t = SequenceTreeInternal::<usize, 3>::new();
             let mut v = Vec::new();
@@ -652,6 +653,7 @@ mod tests {
     proptest! {
 
         #[test]
+        #[cfg(release)]
         fn proptest_remove(inserts in arb_indices(), removes in arb_indices()) {
             let mut t = SequenceTreeInternal::<usize, 3>::new();
             let mut v = Vec::new();
