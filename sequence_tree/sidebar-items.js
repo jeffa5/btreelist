@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Iter",""],["SequenceTree","The default sequence tree."]]});

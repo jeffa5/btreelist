@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/sequence-tree/src/sequence_tree.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>sequence_tree.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
-    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../sequence_tree/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/btreelist/src/btreelist.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>btreelist.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../btreelist/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
         </a><h2 class="location"></h2>
     </nav>
-    <nav class="sidebar"><a class="sidebar-logo" href="../../sequence_tree/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../sequence_tree/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../btreelist/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../btreelist/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -747,10 +747,6 @@
 <span id="742">742</span>
 <span id="743">743</span>
 <span id="744">744</span>
-<span id="745">745</span>
-<span id="746">746</span>
-<span id="747">747</span>
-<span id="748">748</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">cmp</span>::{<span class="ident">min</span>, <span class="ident">Ordering</span>},
     <span class="ident">fmt::Debug</span>,
@@ -759,45 +755,41 @@
 
 <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">6</span>;
 
-<span class="doccomment">/// The default sequence tree.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// This provides a b-tree with a fixed `b` parameter.</span>
-<span class="doccomment">///</span>
 <span class="doccomment">/// It may be worth benchmarking your use case and trying to use a [`Box&lt;T&gt;`](Box) instead of a plain `T`</span>
 <span class="doccomment">/// as this can improve performance in some cases.</span>
 <span class="doccomment">/// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="ident">root_node</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="ident">root_node</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">struct</span> <span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+<span class="kw">struct</span> <span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="ident">elements</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
-    <span class="ident">children</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">children</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">length</span>: <span class="ident">usize</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span>,
 {
-    <span class="doccomment">/// Construct a new, empty, sequence.</span>
+    <span class="doccomment">/// Construct a new, empty, list.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">root_node</span>: <span class="prelude-val">None</span> }
     }
 
-    <span class="doccomment">/// Get the length of the sequence.</span>
+    <span class="doccomment">/// Get the length of the list.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">root_node</span>.<span class="ident">as_ref</span>().<span class="ident">map_or</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">n</span><span class="op">|</span> <span class="ident">n</span>.<span class="ident">len</span>())
     }
 
-    <span class="doccomment">/// Check if the sequence is empty.</span>
+    <span class="doccomment">/// Check if the list is empty.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span>
     }
 
-    <span class="doccomment">/// Create an iterator through the sequence.</span>
+    <span class="doccomment">/// Create an iterator through the list.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">T</span><span class="op">&gt;</span> {
         <span class="ident">Iter</span> {
             <span class="ident">inner</span>: <span class="self">self</span>,
@@ -806,7 +798,7 @@
         }
     }
 
-    <span class="doccomment">/// Insert the `element` into the sequence at `index`.</span>
+    <span class="doccomment">/// Insert the `element` into the list at `index`.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
@@ -819,7 +811,7 @@
 
             <span class="kw">if</span> <span class="ident">root</span>.<span class="ident">is_full</span>() {
                 <span class="kw">let</span> <span class="ident">original_len</span> <span class="op">=</span> <span class="ident">root</span>.<span class="ident">len</span>();
-                <span class="kw">let</span> <span class="ident">new_root</span> <span class="op">=</span> <span class="ident">SequenceTreeNode::new</span>();
+                <span class="kw">let</span> <span class="ident">new_root</span> <span class="op">=</span> <span class="ident">BTreeListNode::new</span>();
 
                 <span class="comment">// move new_root to root position</span>
                 <span class="kw">let</span> <span class="ident">old_root</span> <span class="op">=</span> <span class="ident">mem::replace</span>(<span class="ident">root</span>, <span class="ident">new_root</span>);
@@ -844,7 +836,7 @@
                 <span class="ident">root</span>.<span class="ident">insert_into_non_full_node</span>(<span class="ident">index</span>, <span class="ident">element</span>)
             }
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">root_node</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">SequenceTreeNode</span> {
+            <span class="self">self</span>.<span class="ident">root_node</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">BTreeListNode</span> {
                 <span class="ident">elements</span>: <span class="macro">vec!</span>[<span class="ident">element</span>],
                 <span class="ident">children</span>: <span class="ident">Vec::new</span>(),
                 <span class="ident">length</span>: <span class="number">1</span>,
@@ -853,23 +845,23 @@
         <span class="macro">assert_eq!</span>(<span class="self">self</span>.<span class="ident">len</span>(), <span class="ident">old_len</span> <span class="op">+</span> <span class="number">1</span>, <span class="string">&quot;{:#?}&quot;</span>, <span class="self">self</span>);
     }
 
-    <span class="doccomment">/// Push the `element` onto the back of the sequence.</span>
+    <span class="doccomment">/// Push the `element` onto the back of the list.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">element</span>: <span class="ident">T</span>) {
         <span class="kw">let</span> <span class="ident">l</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">len</span>();
         <span class="self">self</span>.<span class="ident">insert</span>(<span class="ident">l</span>, <span class="ident">element</span>)
     }
 
-    <span class="doccomment">/// Get the `element` at `index` in the sequence.</span>
+    <span class="doccomment">/// Get the `element` at `index` in the list.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">root_node</span>.<span class="ident">as_ref</span>().<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> <span class="ident">n</span>.<span class="ident">get</span>(<span class="ident">index</span>))
     }
 
-    <span class="doccomment">/// Get the and `element` at `index` in the sequence.</span>
+    <span class="doccomment">/// Get the and `element` at `index` in the list.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mut</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">T</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">root_node</span>.<span class="ident">as_mut</span>().<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> <span class="ident">n</span>.<span class="ident">get_mut</span>(<span class="ident">index</span>))
     }
 
-    <span class="doccomment">/// Removes the element at `index` from the sequence.</span>
+    <span class="doccomment">/// Removes the element at `index` from the list.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
@@ -896,7 +888,7 @@
         }
     }
 
-    <span class="doccomment">/// Update the `element` at `index` in the sequence, returning the old value.</span>
+    <span class="doccomment">/// Update the `element` at `index` in the list, returning the old value.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
@@ -906,7 +898,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span>,
 {
@@ -974,7 +966,7 @@
 
         <span class="comment">// Create a new node which is going to store (B-1) keys</span>
         <span class="comment">// of the full child.</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">successor_sibling</span> <span class="op">=</span> <span class="ident">SequenceTreeNode::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">successor_sibling</span> <span class="op">=</span> <span class="ident">BTreeListNode::new</span>();
 
         <span class="kw">let</span> <span class="ident">full_child</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">children</span>[<span class="ident">full_child_index</span>];
         <span class="kw">let</span> <span class="ident">original_len</span> <span class="op">=</span> <span class="ident">full_child</span>.<span class="ident">len</span>();
@@ -1184,7 +1176,7 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">merge</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">middle</span>: <span class="ident">T</span>, <span class="ident">successor_sibling</span>: <span class="ident">SequenceTreeNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">merge</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">middle</span>: <span class="ident">T</span>, <span class="ident">successor_sibling</span>: <span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) {
         <span class="self">self</span>.<span class="ident">elements</span>.<span class="ident">push</span>(<span class="ident">middle</span>);
         <span class="self">self</span>.<span class="ident">elements</span>.<span class="ident">extend</span>(<span class="ident">successor_sibling</span>.<span class="ident">elements</span>);
         <span class="self">self</span>.<span class="ident">children</span>.<span class="ident">extend</span>(<span class="ident">successor_sibling</span>.<span class="ident">children</span>);
@@ -1261,7 +1253,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span>,
 {
@@ -1270,7 +1262,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span> <span class="op">+</span> <span class="ident">PartialEq</span>,
 {
@@ -1279,7 +1271,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">IntoIterator</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">IntoIterator</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Debug</span>,
 {
@@ -1297,7 +1289,7 @@
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="ident">inner</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SequenceTree</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">inner</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">index</span>: <span class="ident">usize</span>,
     <span class="ident">index_back</span>: <span class="ident">usize</span>,
 }
@@ -1339,7 +1331,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">push_back</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTree::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
 
         <span class="ident">t</span>.<span class="ident">push</span>(());
         <span class="ident">t</span>.<span class="ident">push</span>(());
@@ -1353,7 +1345,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">insert</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTree::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
 
         <span class="ident">t</span>.<span class="ident">insert</span>(<span class="number">0</span>, ());
         <span class="ident">t</span>.<span class="ident">insert</span>(<span class="number">1</span>, ());
@@ -1366,7 +1358,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">insert_book</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTree::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">100</span> {
             <span class="ident">t</span>.<span class="ident">insert</span>(<span class="ident">i</span> <span class="op">%</span> <span class="number">2</span>, ());
@@ -1375,7 +1367,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">insert_book_vec</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTree::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">100</span> {
@@ -1388,7 +1380,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">iter_forth_back</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTree::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
 
         <span class="ident">t</span>.<span class="ident">push</span>(<span class="number">1</span>);
         <span class="ident">t</span>.<span class="ident">push</span>(<span class="number">2</span>);
@@ -1448,7 +1440,7 @@
         <span class="attribute">#[<span class="ident">test</span>]</span>
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">release</span>)]</span>
         <span class="kw">fn</span> <span class="ident">proptest_insert</span>(<span class="ident">indices</span> <span class="kw">in</span> <span class="ident">arb_indices</span>()) {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTree</span>::<span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">3</span><span class="op">&gt;</span><span class="ident">::new</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList</span>::<span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">3</span><span class="op">&gt;</span><span class="ident">::new</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">indices</span>{
@@ -1470,7 +1462,7 @@
         <span class="attribute">#[<span class="ident">test</span>]</span>
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">release</span>)]</span>
         <span class="kw">fn</span> <span class="ident">proptest_remove</span>(<span class="ident">inserts</span> <span class="kw">in</span> <span class="ident">arb_indices</span>(), <span class="ident">removes</span> <span class="kw">in</span> <span class="ident">arb_indices</span>()) {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SequenceTree</span>::<span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">3</span><span class="op">&gt;</span><span class="ident">::new</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList</span>::<span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">3</span><span class="op">&gt;</span><span class="ident">::new</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">inserts</span> {
@@ -1500,5 +1492,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="sequence_tree" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0 (fe5b13d68 2022-05-18)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="btreelist" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0 (fe5b13d68 2022-05-18)" ></div>
 </body></html>
