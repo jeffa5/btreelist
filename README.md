@@ -1,6 +1,6 @@
-# Sequence Tree
+# BTreeList
 
-A sequence data structure that has efficient insertion and removal in the middle.
+A list data structure that has efficient insertion and removal in the middle.
 
 ## Heritage
 

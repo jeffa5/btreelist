@@ -1,5 +1,5 @@
 {
-  description = "sequence-tree";
+  description = "BTreeList";
 
   inputs = {
     flake-utils = {
@@ -33,7 +33,7 @@
             (name: value: value.build)
             cargoNix.workspaceMembers;
 
-          defaultPackage = self.packages.${system}.sequence-tree;
+          defaultPackage = self.packages.${system}.btreelist;
 
           checks = lib.attrsets.mapAttrs
             (name: value: value.build.override {

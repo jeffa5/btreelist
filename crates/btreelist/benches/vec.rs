@@ -1,6 +1,6 @@
 use btree_vec::BTreeVec;
+use btreelist::BTreeList;
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
-use sequence_tree::SequenceTree;
 
 macro_rules! push {
     ($name:ident, $v:ident) => {
@@ -71,7 +71,7 @@ macro_rules! impls {
     };
 }
 
-impls![(vec, Vec), (sqt, SequenceTree), (btv, BTreeVec)];
+impls![(vec, Vec), (btl, BTreeList), (btv, BTreeVec)];
 
 fn criterion_benchmark(c: &mut Criterion) {
     macro_rules! bg {
@@ -83,8 +83,8 @@ fn criterion_benchmark(c: &mut Criterion) {
                     group.bench_with_input(BenchmarkId::new("vec", size), &size, |b, &size| {
                         b.iter(|| [< $name _vec >] (size))
                     });
-                    group.bench_with_input(BenchmarkId::new("sqt", size), &size, |b, &size| {
-                        b.iter(|| [< $name _sqt >] (size))
+                    group.bench_with_input(BenchmarkId::new("btl", size), &size, |b, &size| {
+                        b.iter(|| [< $name _btl >] (size))
                     });
                     group.bench_with_input(BenchmarkId::new("btv", size), &size, |b, &size| {
                         b.iter(|| [< $name _btv >] (size))

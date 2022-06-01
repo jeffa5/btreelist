@@ -6,45 +6,41 @@ use std::{
 
 const B: usize = 6;
 
-/// The default sequence tree.
-///
-/// This provides a b-tree with a fixed `b` parameter.
-///
 /// It may be worth benchmarking your use case and trying to use a [`Box<T>`](Box) instead of a plain `T`
 /// as this can improve performance in some cases.
 /// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).
 #[derive(Clone, Debug)]
-pub struct SequenceTree<T> {
-    root_node: Option<SequenceTreeNode<T>>,
+pub struct BTreeList<T> {
+    root_node: Option<BTreeListNode<T>>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
-struct SequenceTreeNode<T> {
+struct BTreeListNode<T> {
     elements: Vec<T>,
-    children: Vec<SequenceTreeNode<T>>,
+    children: Vec<BTreeListNode<T>>,
     length: usize,
 }
 
-impl<T> SequenceTree<T>
+impl<T> BTreeList<T>
 where
     T: Clone + Debug,
 {
-    /// Construct a new, empty, sequence.
+    /// Construct a new, empty, list.
     pub fn new() -> Self {
         Self { root_node: None }
     }
 
-    /// Get the length of the sequence.
+    /// Get the length of the list.
     pub fn len(&self) -> usize {
         self.root_node.as_ref().map_or(0, |n| n.len())
     }
 
-    /// Check if the sequence is empty.
+    /// Check if the list is empty.
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-    /// Create an iterator through the sequence.
+    /// Create an iterator through the list.
     pub fn iter(&self) -> Iter<'_, T> {
         Iter {
             inner: self,
@@ -53,7 +49,7 @@ where
         }
     }
 
-    /// Insert the `element` into the sequence at `index`.
+    /// Insert the `element` into the list at `index`.
     ///
     /// # Panics
     ///
@@ -66,7 +62,7 @@ where
 
             if root.is_full() {
                 let original_len = root.len();
-                let new_root = SequenceTreeNode::new();
+                let new_root = BTreeListNode::new();
 
                 // move new_root to root position
                 let old_root = mem::replace(root, new_root);
@@ -91,7 +87,7 @@ where
                 root.insert_into_non_full_node(index, element)
             }
         } else {
-            self.root_node = Some(SequenceTreeNode {
+            self.root_node = Some(BTreeListNode {
                 elements: vec![element],
                 children: Vec::new(),
                 length: 1,
@@ -100,23 +96,23 @@ where
         assert_eq!(self.len(), old_len + 1, "{:#?}", self);
     }
 
-    /// Push the `element` onto the back of the sequence.
+    /// Push the `element` onto the back of the list.
     pub fn push(&mut self, element: T) {
         let l = self.len();
         self.insert(l, element)
     }
 
-    /// Get the `element` at `index` in the sequence.
+    /// Get the `element` at `index` in the list.
     pub fn get(&self, index: usize) -> Option<&T> {
         self.root_node.as_ref().and_then(|n| n.get(index))
     }
 
-    /// Get the and `element` at `index` in the sequence.
+    /// Get the and `element` at `index` in the list.
     pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
         self.root_node.as_mut().and_then(|n| n.get_mut(index))
     }
 
-    /// Removes the element at `index` from the sequence.
+    /// Removes the element at `index` from the list.
     ///
     /// # Panics
     ///
@@ -143,7 +139,7 @@ where
         }
     }
 
-    /// Update the `element` at `index` in the sequence, returning the old value.
+    /// Update the `element` at `index` in the list, returning the old value.
     ///
     /// # Panics
     ///
@@ -153,7 +149,7 @@ where
     }
 }
 
-impl<T> SequenceTreeNode<T>
+impl<T> BTreeListNode<T>
 where
     T: Clone + Debug,
 {
@@ -221,7 +217,7 @@ where
 
         // Create a new node which is going to store (B-1) keys
         // of the full child.
-        let mut successor_sibling = SequenceTreeNode::new();
+        let mut successor_sibling = BTreeListNode::new();
 
         let full_child = &mut self.children[full_child_index];
         let original_len = full_child.len();
@@ -431,7 +427,7 @@ where
         }
     }
 
-    fn merge(&mut self, middle: T, successor_sibling: SequenceTreeNode<T>) {
+    fn merge(&mut self, middle: T, successor_sibling: BTreeListNode<T>) {
         self.elements.push(middle);
         self.elements.extend(successor_sibling.elements);
         self.children.extend(successor_sibling.children);
@@ -508,7 +504,7 @@ where
     }
 }
 
-impl<T> Default for SequenceTree<T>
+impl<T> Default for BTreeList<T>
 where
     T: Clone + Debug,
 {
@@ -517,7 +513,7 @@ where
     }
 }
 
-impl<T> PartialEq for SequenceTree<T>
+impl<T> PartialEq for BTreeList<T>
 where
     T: Clone + Debug + PartialEq,
 {
@@ -526,7 +522,7 @@ where
     }
 }
 
-impl<'a, T> IntoIterator for &'a SequenceTree<T>
+impl<'a, T> IntoIterator for &'a BTreeList<T>
 where
     T: Clone + Debug,
 {
@@ -544,7 +540,7 @@ where
 }
 
 pub struct Iter<'a, T> {
-    inner: &'a SequenceTree<T>,
+    inner: &'a BTreeList<T>,
     index: usize,
     index_back: usize,
 }
@@ -586,7 +582,7 @@ mod tests {
 
     #[test]
     fn push_back() {
-        let mut t = SequenceTree::new();
+        let mut t = BTreeList::new();
 
         t.push(());
         t.push(());
@@ -600,7 +596,7 @@ mod tests {
 
     #[test]
     fn insert() {
-        let mut t = SequenceTree::new();
+        let mut t = BTreeList::new();
 
         t.insert(0, ());
         t.insert(1, ());
@@ -613,7 +609,7 @@ mod tests {
 
     #[test]
     fn insert_book() {
-        let mut t = SequenceTree::new();
+        let mut t = BTreeList::new();
 
         for i in 0..100 {
             t.insert(i % 2, ());
@@ -622,7 +618,7 @@ mod tests {
 
     #[test]
     fn insert_book_vec() {
-        let mut t = SequenceTree::new();
+        let mut t = BTreeList::new();
         let mut v = Vec::new();
 
         for i in 0..100 {
@@ -635,7 +631,7 @@ mod tests {
 
     #[test]
     fn iter_forth_back() {
-        let mut t = SequenceTree::new();
+        let mut t = BTreeList::new();
 
         t.push(1);
         t.push(2);
@@ -695,7 +691,7 @@ mod tests {
         #[test]
         #[cfg(release)]
         fn proptest_insert(indices in arb_indices()) {
-            let mut t = SequenceTree::<usize, 3>::new();
+            let mut t = BTreeList::<usize, 3>::new();
             let mut v = Vec::new();
 
             for i in indices{
@@ -717,7 +713,7 @@ mod tests {
         #[test]
         #[cfg(release)]
         fn proptest_remove(inserts in arb_indices(), removes in arb_indices()) {
-            let mut t = SequenceTree::<usize, 3>::new();
+            let mut t = BTreeList::<usize, 3>::new();
             let mut v = Vec::new();
 
             for i in inserts {
