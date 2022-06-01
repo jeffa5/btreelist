@@ -133,7 +133,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         }
     }
 
-    bg!("push", "pop", "insert", "remove", "get", "iter");
+    bg!["push", "pop", "insert", "remove", "get", "iter"];
 }
 
 criterion_group!(benches, criterion_benchmark);
