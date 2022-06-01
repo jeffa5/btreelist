@@ -1,8 +1,11 @@
 use std::{
     cmp::{min, Ordering},
     fmt::Debug,
+    iter::FromIterator,
     mem,
 };
+
+use crate::Iter;
 
 const B: usize = 6;
 
@@ -529,35 +532,21 @@ impl<'a, T> IntoIterator for &'a BTreeList<T> {
     }
 }
 
-/// Iterator over items in a [`BTreeList`].
-#[derive(Debug)]
-pub struct Iter<'a, T> {
-    inner: &'a BTreeList<T>,
-    index: usize,
-    index_back: usize,
-}
-
-impl<'a, T> Iterator for Iter<'a, T> {
-    type Item = &'a T;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.index < self.index_back {
-            self.index += 1;
-            self.inner.get(self.index - 1)
-        } else {
-            None
+impl<T> Extend<T> for BTreeList<T> {
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        for item in iter {
+            self.push(item)
         }
     }
 }
 
-impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
-    fn next_back(&mut self) -> Option<Self::Item> {
-        if self.index < self.index_back {
-            self.index_back -= 1;
-            self.inner.get(self.index_back)
-        } else {
-            None
+impl<T> FromIterator<T> for BTreeList<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let mut l = BTreeList::new();
+        for item in iter {
+            l.push(item);
         }
+        l
     }
 }
 

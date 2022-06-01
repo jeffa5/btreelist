@@ -25,5 +25,7 @@
 //! See [`BTreeList`].
 
 mod btreelist;
+mod iter;
 
-pub use crate::btreelist::{BTreeList, Iter};
+pub use crate::btreelist::BTreeList;
+pub use crate::iter::Iter;
