@@ -35,7 +35,7 @@ jobs:
           args: --workspace --all-features --no-deps
 
       - name: Configure root page
-        run: echo '<meta http-equiv="refresh" content="0; url=sequence_tree">' > target/doc/index.html
+        run: echo '<meta http-equiv="refresh" content="0; url=btreelist">' > target/doc/index.html
 
       - name: Deploy docs
         uses: peaceiris/actions-gh-pages@v3
