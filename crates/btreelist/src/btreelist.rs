@@ -100,8 +100,7 @@ impl<T> BTreeList<T> {
 
     /// Push the `element` onto the back of the list.
     pub fn push(&mut self, element: T) {
-        let l = self.len();
-        self.insert(l, element)
+        self.push_back(element)
     }
 
     /// Push the `element` onto the back of the list.
@@ -113,6 +112,11 @@ impl<T> BTreeList<T> {
     /// Push the `element` onto the front of the list.
     pub fn push_front(&mut self, element: T) {
         self.insert(0, element)
+    }
+
+    /// Remove and return the last element from the list, if there is one.
+    pub fn pop(&mut self) -> Option<T> {
+        self.pop_back()
     }
 
     /// Remove and return the last element from the list, if there is one.
