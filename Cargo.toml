@@ -7,6 +7,7 @@ description = "A list data structure that has efficient insertion and removal in
 homepage = "https://github.com/jeffa5/btreelist"
 repository = "https://github.com/jeffa5/btreelist"
 documentation = "https://docs.rs/btreelist"
+keywords = ["vec", "list", "tree", "btree", "fallible"]
 
 [dependencies]
 
