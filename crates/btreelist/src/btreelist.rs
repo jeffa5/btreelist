@@ -122,8 +122,7 @@ impl<T> BTreeList<T> {
     /// Remove and return the last element from the list, if there is one.
     pub fn pop_back(&mut self) -> Option<T> {
         if !self.is_empty() {
-            // SAFETY: should always have an element to remove when len is positive
-            Some(self.remove(self.len() - 1))
+            self.remove(self.len() - 1)
         } else {
             None
         }
@@ -132,8 +131,7 @@ impl<T> BTreeList<T> {
     /// Remove and return the first element from the list, if there is one.
     pub fn pop_front(&mut self) -> Option<T> {
         if !self.is_empty() {
-            // SAFETY: should always have an element to remove when len is positive
-            Some(self.remove(0))
+            self.remove(0)
         } else {
             None
         }
@@ -170,11 +168,7 @@ impl<T> BTreeList<T> {
     }
 
     /// Removes the element at `index` from the list.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `index` is out of bounds.
-    pub fn remove(&mut self, index: usize) -> T {
+    pub fn remove(&mut self, index: usize) -> Option<T> {
         if let Some(root) = self.root_node.as_mut() {
             #[cfg(debug_assertions)]
             let len = root.check();
@@ -192,7 +186,7 @@ impl<T> BTreeList<T> {
             debug_assert_eq!(len, self.root_node.as_ref().map_or(0, |r| r.check()) + 1);
             old
         } else {
-            panic!("remove from empty tree")
+            None
         }
     }
 
@@ -309,25 +303,29 @@ impl<T> BTreeListNode<T> {
         assert_eq!(original_len_self, self.len());
     }
 
-    fn remove_from_leaf(&mut self, index: usize) -> T {
+    fn remove_from_leaf(&mut self, index: usize) -> Option<T> {
         self.length -= 1;
-        self.elements.remove(index)
+        if index < self.elements.len() {
+            Some(self.elements.remove(index))
+        } else {
+            None
+        }
     }
 
-    fn remove_element_from_non_leaf(&mut self, index: usize, element_index: usize) -> T {
+    fn remove_element_from_non_leaf(&mut self, index: usize, element_index: usize) -> Option<T> {
         self.length -= 1;
         if self.children[element_index].elements.len() >= B {
             let total_index = self.cumulative_index(element_index);
             // recursively delete index - 1 in predecessor_node
-            let predecessor = self.children[element_index].remove(index - 1 - total_index);
+            let predecessor = self.children[element_index].remove(index - 1 - total_index)?;
             // replace element with that one
-            mem::replace(&mut self.elements[element_index], predecessor)
+            Some(mem::replace(&mut self.elements[element_index], predecessor))
         } else if self.children[element_index + 1].elements.len() >= B {
             // recursively delete index + 1 in successor_node
             let total_index = self.cumulative_index(element_index + 1);
-            let successor = self.children[element_index + 1].remove(index + 1 - total_index);
+            let successor = self.children[element_index + 1].remove(index + 1 - total_index)?;
             // replace element with that one
-            mem::replace(&mut self.elements[element_index], successor)
+            Some(mem::replace(&mut self.elements[element_index], successor))
         } else {
             let middle_element = self.elements.remove(element_index);
             let successor_child = self.children.remove(element_index + 1);
@@ -345,7 +343,7 @@ impl<T> BTreeListNode<T> {
             .sum()
     }
 
-    fn remove_from_internal_child(&mut self, index: usize, mut child_index: usize) -> T {
+    fn remove_from_internal_child(&mut self, index: usize, mut child_index: usize) -> Option<T> {
         if self.children[child_index].elements.len() < B
             && if child_index > 0 {
                 self.children[child_index - 1].elements.len() < B
@@ -438,7 +436,7 @@ impl<T> BTreeListNode<T> {
         l
     }
 
-    pub(crate) fn remove(&mut self, index: usize) -> T {
+    pub(crate) fn remove(&mut self, index: usize) -> Option<T> {
         let original_len = self.len();
         if self.is_leaf() {
             let v = self.remove_from_leaf(index);
@@ -471,13 +469,7 @@ impl<T> BTreeListNode<T> {
                     }
                 }
             }
-            panic!(
-                "index not found to remove {} {} {} {}",
-                index,
-                total_index,
-                self.len(),
-                self.check()
-            );
+            None
         }
     }
 
@@ -760,6 +752,15 @@ mod tests {
         assert_eq!(t.set(0, 1), Err(1));
         t.push(1);
         assert_eq!(t.set(0, 2), Ok(1));
+    }
+
+    #[test]
+    fn remove_no_panic() {
+        let mut t = BTreeList::new();
+        assert_eq!(t.remove(0), None);
+        assert_eq!(t.remove(1), None);
+        t.push(1);
+        assert_eq!(t.remove(0), Some(1));
     }
 
     #[cfg(release)]
