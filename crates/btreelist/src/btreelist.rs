@@ -51,7 +51,8 @@ impl<T> BTreeList<T> {
         }
     }
 
-    /// Insert the `element` into the list at `index`.
+    /// Insert the `element` into the list at `index`. Returns the element to be inserted if the
+    /// index is out of bounds.
     pub fn insert(&mut self, index: usize, element: T) -> Result<(), T> {
         let old_len = self.len();
         let inserted = if let Some(root) = self.root_node.as_mut() {
@@ -167,7 +168,7 @@ impl<T> BTreeList<T> {
         self.get_mut(self.len() - 1)
     }
 
-    /// Removes the element at `index` from the list.
+    /// Removes the element at `index` from the list if it exists.
     pub fn remove(&mut self, index: usize) -> Option<T> {
         if let Some(root) = self.root_node.as_mut() {
             #[cfg(debug_assertions)]
@@ -190,7 +191,8 @@ impl<T> BTreeList<T> {
         }
     }
 
-    /// Update the `element` at `index` in the list, returning the old value.
+    /// Update the `element` at `index` in the list, returning the old value on success, or the
+    /// given value when the index is out of bounds.
     pub fn set(&mut self, index: usize, element: T) -> Result<T, T> {
         if let Some(node) = self.root_node.as_mut() {
             node.set(index, element)
