@@ -197,12 +197,12 @@ impl<T> BTreeList<T> {
     }
 
     /// Update the `element` at `index` in the list, returning the old value.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `index > len`
-    pub fn set(&mut self, index: usize, element: T) -> T {
-        self.root_node.as_mut().unwrap().set(index, element)
+    pub fn set(&mut self, index: usize, element: T) -> Result<T, T> {
+        if let Some(node) = self.root_node.as_mut() {
+            node.set(index, element)
+        } else {
+            Err(element)
+        }
     }
 }
 
@@ -489,10 +489,10 @@ impl<T> BTreeListNode<T> {
         assert!(self.is_full());
     }
 
-    pub(crate) fn set(&mut self, index: usize, element: T) -> T {
+    pub(crate) fn set(&mut self, index: usize, element: T) -> Result<T, T> {
         if self.is_leaf() {
             let old_element = self.elements.get_mut(index).unwrap();
-            mem::replace(old_element, element)
+            Ok(mem::replace(old_element, element))
         } else {
             let mut cumulative_len = 0;
             for (child_index, child) in self.children.iter_mut().enumerate() {
@@ -502,14 +502,15 @@ impl<T> BTreeListNode<T> {
                     }
                     Ordering::Equal => {
                         let old_element = self.elements.get_mut(child_index).unwrap();
-                        return mem::replace(old_element, element);
+                        return Ok(mem::replace(old_element, element));
                     }
                     Ordering::Greater => {
                         return child.set(index - cumulative_len, element);
                     }
                 }
             }
-            panic!("Invalid index to set: {} but len was {}", index, self.len())
+            // can't set so return the original element
+            Err(element)
         }
     }
 
@@ -751,6 +752,14 @@ mod tests {
         assert_eq!(t.pop_back(), Some(2));
         assert_eq!(t.pop_back(), Some(1));
         assert_eq!(t.pop_back(), None);
+    }
+
+    #[test]
+    fn set_no_panic() {
+        let mut t = BTreeList::new();
+        assert_eq!(t.set(0, 1), Err(1));
+        t.push(1);
+        assert_eq!(t.set(0, 2), Ok(1));
     }
 
     #[cfg(release)]
