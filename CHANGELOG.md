@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `btreelist` macro [#8](https://github.com/jeffa5/btreelist/pull/8)
+
 ### Changed
 
 - Made the `B` parameter exposed as a `const generic` on the list [#5](https://github.com/jeffa5/btreelist/pull/5)
