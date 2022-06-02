@@ -2,11 +2,23 @@ use btree_vec::BTreeVec;
 use btreelist::BTreeList;
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 
+macro_rules! empty {
+    (vec) => {
+        Vec::new()
+    };
+    (btv) => {
+        BTreeVec::new()
+    };
+    (btl) => {
+        BTreeList::default()
+    };
+}
+
 macro_rules! push {
-    ($name:ident, $v:ident) => {
+    ($name:ident) => {
         paste::item! {
             fn [< push_ $name >] (n: u64) {
-                let mut v = $v::new();
+                let mut v = empty!($name);
                 for i in 0..n {
                     v.push(i);
                 }
@@ -16,10 +28,10 @@ macro_rules! push {
 }
 
 macro_rules! pop {
-    ($name:ident, $v:ident) => {
+    ($name:ident) => {
         paste::item! {
             fn [< pop_ $name >] (n: u64) {
-                let mut v = $v::new();
+                let mut v = empty!($name);
                 for i in 0..n {
                     v.push(i);
                 }
@@ -32,10 +44,10 @@ macro_rules! pop {
 }
 
 macro_rules! insert {
-    ($name:ident, $v:ident) => {
+    ($name:ident) => {
         paste::item! {
             fn [< insert_ $name >] (n: u64) {
-                let mut v = $v::new();
+                let mut v = empty!($name);
                 for i in 0..n {
                     let _ = v.insert(0, i);
                 }
@@ -45,10 +57,10 @@ macro_rules! insert {
 }
 
 macro_rules! remove {
-    ($name:ident, $v:ident) => {
+    ($name:ident) => {
         paste::item! {
             fn [< remove_ $name >] (n: u64) {
-                let mut v = $v::new();
+                let mut v = empty!($name);
                 for i in 0..n {
                     v.push(i);
                 }
@@ -61,10 +73,10 @@ macro_rules! remove {
 }
 
 macro_rules! get {
-    ($name:ident, $v:ident) => {
+    ($name:ident) => {
         paste::item! {
             fn [< get_ $name >] (n: u64) {
-                let mut v = $v::new();
+                let mut v = empty!($name);
                 for i in 0..n {
                     v.push(i);
                 }
@@ -77,10 +89,10 @@ macro_rules! get {
 }
 
 macro_rules! iter {
-    ($name:ident, $v:ident) => {
+    ($name:ident) => {
         paste::item! {
             fn [< iter_ $name >] (n: u64) {
-                let mut v = $v::new();
+                let mut v = empty!($name);
                 for i in 0..n {
                     v.push(i);
                 }
@@ -91,21 +103,21 @@ macro_rules! iter {
 }
 
 macro_rules! impls {
-    (($name:ident, $v:ident)) => {
-        push!($name, $v);
-        pop!($name, $v);
-        insert!($name, $v);
-        remove!($name, $v);
-        get!($name, $v);
-        iter!($name, $v);
+    ($name:ident) => {
+        push!($name);
+        pop!($name);
+        insert!($name);
+        remove!($name);
+        get!($name);
+        iter!($name);
     };
-    (($name:ident, $v:ident), $($others:tt),+) => {
-        impls!(($name, $v));
+    ($name:ident, $($others:tt),+) => {
+        impls!($name);
         impls!($($others),+);
     };
 }
 
-impls![(vec, Vec), (btl, BTreeList), (btv, BTreeVec)];
+impls![vec, btl, btv];
 
 fn criterion_benchmark(c: &mut Criterion) {
     macro_rules! bg {

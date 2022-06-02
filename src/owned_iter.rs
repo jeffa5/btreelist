@@ -2,11 +2,11 @@ use crate::BTreeList;
 
 /// An iterator over items in a [`BTreeList`].
 #[derive(Debug)]
-pub struct OwnedIter<T> {
-    pub(crate) inner: BTreeList<T>,
+pub struct OwnedIter<T, const B: usize> {
+    pub(crate) inner: BTreeList<T, B>,
 }
 
-impl<T> Iterator for OwnedIter<T> {
+impl<T, const B: usize> Iterator for OwnedIter<T, B> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -18,7 +18,7 @@ impl<T> Iterator for OwnedIter<T> {
     }
 }
 
-impl<T> DoubleEndedIterator for OwnedIter<T> {
+impl<T, const B: usize> DoubleEndedIterator for OwnedIter<T, B> {
     fn next_back(&mut self) -> Option<Self::Item> {
         if !self.inner.is_empty() {
             self.inner.pop_back()
