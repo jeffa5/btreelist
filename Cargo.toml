@@ -1,4 +1,21 @@
-[workspace]
-members = [
-  "crates/*"
-]
+[package]
+name = "btreelist"
+version = "0.3.0"
+edition = "2018"
+license = "MIT"
+description = "A list data structure that has efficient insertion and removal in the middle."
+homepage = "https://github.com/jeffa5/btreelist"
+repository = "https://github.com/jeffa5/btreelist"
+documentation = "https://docs.rs/btreelist"
+
+[dependencies]
+
+[dev-dependencies]
+proptest = "1.0.0"
+criterion = "0.3" # for benchmarks
+btree-vec = "0.2.3" # for comparison
+paste = "1.0.7" # for benchmark macros
+
+[[bench]]
+name = "vec"
+harness = false
