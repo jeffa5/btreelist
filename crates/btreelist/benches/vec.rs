@@ -37,7 +37,7 @@ macro_rules! insert {
             fn [< insert_ $name >] (n: u64) {
                 let mut v = $v::new();
                 for i in 0..n {
-                    v.insert(0, i);
+                    let _ = v.insert(0, i);
                 }
             }
         }
