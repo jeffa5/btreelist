@@ -1,6 +1,5 @@
 use std::{
     cmp::{min, Ordering},
-    fmt::Debug,
     iter::FromIterator,
     mem,
     ops::{Index, IndexMut},
