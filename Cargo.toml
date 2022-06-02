@@ -10,6 +10,8 @@ documentation = "https://docs.rs/btreelist"
 keywords = ["vec", "list", "tree", "btree", "fallible"]
 categories = ["data-structures"]
 
+exclude = ["/scripts", "/Cargo.nix", "/flake.*", "/.envrc", "/.github"]
+
 [dependencies]
 
 [dev-dependencies]
