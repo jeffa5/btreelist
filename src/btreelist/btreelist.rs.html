@@ -865,6 +865,25 @@
 <span id="860">860</span>
 <span id="861">861</span>
 <span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
+<span id="869">869</span>
+<span id="870">870</span>
+<span id="871">871</span>
+<span id="872">872</span>
+<span id="873">873</span>
+<span id="874">874</span>
+<span id="875">875</span>
+<span id="876">876</span>
+<span id="877">877</span>
+<span id="878">878</span>
+<span id="879">879</span>
+<span id="880">880</span>
+<span id="881">881</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">cmp</span>::{<span class="ident">min</span>, <span class="ident">Ordering</span>},
     <span class="ident">iter::FromIterator</span>,
@@ -874,26 +893,24 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Iter</span>, <span class="ident">OwnedIter</span>};
 
-<span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">6</span>;
-
 <span class="doccomment">/// A list with efficient insert and removal in the middle.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// It may be worth benchmarking your use case and trying to use a [`Box&lt;T&gt;`](Box) instead of a plain `T`</span>
 <span class="doccomment">/// as this can improve performance in some cases.</span>
 <span class="doccomment">/// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="ident">root_node</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">6</span><span class="op">&gt;</span> {
+    <span class="ident">root_node</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">struct</span> <span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+<span class="kw">struct</span> <span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> {
     <span class="ident">elements</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
-    <span class="ident">children</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">children</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">length</span>: <span class="ident">usize</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Construct a new, empty, list.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">root_node</span>: <span class="prelude-val">None</span> }
@@ -910,7 +927,7 @@
     }
 
     <span class="doccomment">/// Create an iterator through the list.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span> {
         <span class="ident">Iter</span> {
             <span class="ident">inner</span>: <span class="self">self</span>,
             <span class="ident">index</span>: <span class="number">0</span>,
@@ -1074,7 +1091,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> <span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">elements</span>: <span class="ident">Vec::new</span>(),
@@ -1357,7 +1374,7 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">merge</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">middle</span>: <span class="ident">T</span>, <span class="ident">successor_sibling</span>: <span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">merge</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">middle</span>: <span class="ident">T</span>, <span class="ident">successor_sibling</span>: <span class="ident">BTreeListNode</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>) {
         <span class="self">self</span>.<span class="ident">elements</span>.<span class="ident">push</span>(<span class="ident">middle</span>);
         <span class="self">self</span>.<span class="ident">elements</span>.<span class="ident">extend</span>(<span class="ident">successor_sibling</span>.<span class="ident">elements</span>);
         <span class="self">self</span>.<span class="ident">children</span>.<span class="ident">extend</span>(<span class="ident">successor_sibling</span>.<span class="ident">children</span>);
@@ -1450,10 +1467,10 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">IntoIterator</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> <span class="ident">IntoIterator</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">T</span>;
 
-    <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) -&gt; <span class="ident"><span class="self">Self</span>::IntoIter</span> {
         <span class="ident">Iter</span> {
@@ -1464,10 +1481,10 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">IntoIterator</span> <span class="kw">for</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span> <span class="ident">IntoIterator</span> <span class="kw">for</span> <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">T</span>;
 
-    <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">OwnedIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">OwnedIter</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">B</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) -&gt; <span class="ident"><span class="self">Self</span>::IntoIter</span> {
         <span class="ident">OwnedIter</span> { <span class="ident">inner</span>: <span class="self">self</span> }
@@ -1513,7 +1530,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">push_back</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::default</span>();
 
         <span class="ident">t</span>.<span class="ident">push_back</span>(());
         <span class="ident">t</span>.<span class="ident">push_back</span>(());
@@ -1527,7 +1544,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">insert</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::default</span>();
 
         <span class="ident">t</span>.<span class="ident">insert</span>(<span class="number">0</span>, ()).<span class="ident">unwrap</span>();
         <span class="ident">t</span>.<span class="ident">insert</span>(<span class="number">1</span>, ()).<span class="ident">unwrap</span>();
@@ -1540,7 +1557,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">insert_book</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::default</span>();
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">100</span> {
             <span class="ident">t</span>.<span class="ident">insert</span>(<span class="ident">i</span> <span class="op">%</span> <span class="number">2</span>, ()).<span class="ident">unwrap</span>();
@@ -1549,7 +1566,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">insert_book_vec</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::default</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">100</span> {
@@ -1562,7 +1579,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">iter_forth_back</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::default</span>();
 
         <span class="ident">t</span>.<span class="ident">push_back</span>(<span class="number">1</span>);
         <span class="ident">t</span>.<span class="ident">push_back</span>(<span class="number">2</span>);
@@ -1605,7 +1622,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">first_last</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::default</span>();
         <span class="ident">t</span>.<span class="ident">push_back</span>(<span class="number">1</span>);
         <span class="ident">t</span>.<span class="ident">push_back</span>(<span class="number">2</span>);
         <span class="ident">t</span>.<span class="ident">push_back</span>(<span class="number">3</span>);
@@ -1618,7 +1635,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">pop</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::default</span>();
 
         <span class="ident">t</span>.<span class="ident">push_back</span>(<span class="number">1</span>);
         <span class="ident">t</span>.<span class="ident">push_back</span>(<span class="number">2</span>);
@@ -1632,7 +1649,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">set_no_panic</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::default</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">t</span>.<span class="ident">set</span>(<span class="number">0</span>, <span class="number">1</span>), <span class="prelude-val">Err</span>(<span class="number">1</span>));
         <span class="ident">t</span>.<span class="ident">push</span>(<span class="number">1</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">t</span>.<span class="ident">set</span>(<span class="number">0</span>, <span class="number">2</span>), <span class="prelude-val">Ok</span>(<span class="number">1</span>));
@@ -1640,7 +1657,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">remove_no_panic</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::default</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">t</span>.<span class="ident">remove</span>(<span class="number">0</span>), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">t</span>.<span class="ident">remove</span>(<span class="number">1</span>), <span class="prelude-val">None</span>);
         <span class="ident">t</span>.<span class="ident">push</span>(<span class="number">1</span>);
@@ -1649,11 +1666,32 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">insert_no_panic</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">BTreeList::default</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">t</span>.<span class="ident">insert</span>(<span class="number">10</span>, <span class="number">1</span>), <span class="prelude-val">Err</span>(<span class="number">1</span>));
         <span class="macro">assert_eq!</span>(<span class="ident">t</span>.<span class="ident">insert</span>(<span class="number">1</span>, <span class="number">1</span>), <span class="prelude-val">Err</span>(<span class="number">1</span>));
         <span class="macro">assert_eq!</span>(<span class="ident">t</span>.<span class="ident">insert</span>(<span class="number">0</span>, <span class="number">1</span>), <span class="prelude-val">Ok</span>(()));
         <span class="macro">assert_eq!</span>(<span class="ident">t</span>.<span class="ident">insert</span>(<span class="number">10</span>, <span class="number">1</span>), <span class="prelude-val">Err</span>(<span class="number">1</span>));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">generic_b</span>() {
+        <span class="kw">fn</span> <span class="ident">push_a_few</span><span class="op">&lt;</span><span class="kw">const</span> <span class="ident">B</span>: <span class="ident">usize</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="ident">t</span>: <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">B</span><span class="op">&gt;</span>) {
+            <span class="ident">t</span>.<span class="ident">push</span>(<span class="number">1</span>);
+            <span class="ident">t</span>.<span class="ident">push</span>(<span class="number">2</span>);
+            <span class="ident">t</span>.<span class="ident">push</span>(<span class="number">3</span>);
+        }
+
+        <span class="kw">let</span> <span class="ident">t</span>: <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="ident">t6</span>: <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">6</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="ident">t3</span>: <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">3</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="ident">t7</span>: <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">7</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+        <span class="kw">let</span> <span class="ident">t32</span>: <span class="ident">BTreeList</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="number">32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">BTreeList::new</span>();
+
+        <span class="ident">push_a_few</span>(<span class="ident">t</span>);
+        <span class="ident">push_a_few</span>(<span class="ident">t6</span>);
+        <span class="ident">push_a_few</span>(<span class="ident">t3</span>);
+        <span class="ident">push_a_few</span>(<span class="ident">t7</span>);
+        <span class="ident">push_a_few</span>(<span class="ident">t32</span>);
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">release</span>)]</span>
