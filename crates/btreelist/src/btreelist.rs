@@ -55,7 +55,11 @@ impl<T> BTreeList<T> {
     /// index is out of bounds.
     pub fn insert(&mut self, index: usize, element: T) -> Result<(), T> {
         let old_len = self.len();
-        let inserted = if let Some(root) = self.root_node.as_mut() {
+        if index > old_len {
+            return Err(element);
+        }
+
+        if let Some(root) = self.root_node.as_mut() {
             #[cfg(debug_assertions)]
             root.check();
 
@@ -81,20 +85,21 @@ impl<T> BTreeList<T> {
                     (&mut root.children[0], index)
                 };
                 root.length += 1;
-                child.insert_into_non_full_node(insertion_index, element)
+                child.insert_into_non_full_node(insertion_index, element)?
             } else {
-                root.insert_into_non_full_node(index, element)
+                root.insert_into_non_full_node(index, element)?
             }
-        } else {
+        } else if index == 0 {
             self.root_node = Some(BTreeListNode {
                 elements: vec![element],
                 children: Vec::new(),
                 length: 1,
             });
-            Ok(())
-        };
+        } else {
+            return Err(element);
+        }
         assert_eq!(self.len(), old_len + 1);
-        inserted
+        Ok(())
     }
 
     /// Push the `element` onto the back of the list.
@@ -781,6 +786,7 @@ mod tests {
         assert_eq!(t.insert(10, 1), Err(1));
         assert_eq!(t.insert(1, 1), Err(1));
         assert_eq!(t.insert(0, 1), Ok(()));
+        assert_eq!(t.insert(10, 1), Err(1));
     }
 
     #[cfg(release)]
