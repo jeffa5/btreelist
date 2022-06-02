@@ -8,6 +8,7 @@ homepage = "https://github.com/jeffa5/btreelist"
 repository = "https://github.com/jeffa5/btreelist"
 documentation = "https://docs.rs/btreelist"
 keywords = ["vec", "list", "tree", "btree", "fallible"]
+categories = ["data-structures"]
 
 [dependencies]
 
