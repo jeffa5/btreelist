@@ -52,13 +52,9 @@ impl<T> BTreeList<T> {
     }
 
     /// Insert the `element` into the list at `index`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `index > len`.
-    pub fn insert(&mut self, index: usize, element: T) {
+    pub fn insert(&mut self, index: usize, element: T) -> Result<(), T> {
         let old_len = self.len();
-        if let Some(root) = self.root_node.as_mut() {
+        let inserted = if let Some(root) = self.root_node.as_mut() {
             #[cfg(debug_assertions)]
             root.check();
 
@@ -93,9 +89,11 @@ impl<T> BTreeList<T> {
                 elements: vec![element],
                 children: Vec::new(),
                 length: 1,
-            })
-        }
+            });
+            Ok(())
+        };
         assert_eq!(self.len(), old_len + 1);
+        inserted
     }
 
     /// Push the `element` onto the back of the list.
@@ -106,12 +104,14 @@ impl<T> BTreeList<T> {
     /// Push the `element` onto the back of the list.
     pub fn push_back(&mut self, element: T) {
         let l = self.len();
-        self.insert(l, element)
+        // SAFETY: can always push onto the end of a list
+        let _ = self.insert(l, element);
     }
 
     /// Push the `element` onto the front of the list.
     pub fn push_front(&mut self, element: T) {
-        self.insert(0, element)
+        // SAFETY: can always push onto the start of a list
+        let _ = self.insert(0, element);
     }
 
     /// Remove and return the last element from the list, if there is one.
@@ -223,38 +223,48 @@ impl<T> BTreeListNode<T> {
 
     /// Returns the child index and the given index adjusted for the cumulative index before that
     /// child.
-    fn find_child_index(&self, index: usize) -> (usize, usize) {
+    fn find_child_index(&self, index: usize) -> Option<(usize, usize)> {
         let mut cumulative_len = 0;
         for (child_index, child) in self.children.iter().enumerate() {
             if cumulative_len + child.len() >= index {
-                return (child_index, index - cumulative_len);
+                return Some((child_index, index - cumulative_len));
             } else {
                 cumulative_len += child.len() + 1;
             }
         }
-        panic!("index not found in node")
+        None
     }
 
-    fn insert_into_non_full_node(&mut self, index: usize, element: T) {
+    fn insert_into_non_full_node(&mut self, index: usize, element: T) -> Result<(), T> {
         assert!(!self.is_full());
         if self.is_leaf() {
             self.length += 1;
-            self.elements.insert(index, element);
-        } else {
-            let (child_index, sub_index) = self.find_child_index(index);
+            if index <= self.elements.len() {
+                self.elements.insert(index, element);
+                Ok(())
+            } else {
+                Err(element)
+            }
+        } else if let Some((child_index, sub_index)) = self.find_child_index(index) {
             let child = &mut self.children[child_index];
 
             if child.is_full() {
                 self.split_child(child_index);
 
                 // child structure has changed so we need to find the index again
-                let (child_index, sub_index) = self.find_child_index(index);
-                let child = &mut self.children[child_index];
-                child.insert_into_non_full_node(sub_index, element);
+                if let Some((child_index, sub_index)) = self.find_child_index(index) {
+                    let child = &mut self.children[child_index];
+                    child.insert_into_non_full_node(sub_index, element)?;
+                } else {
+                    return Err(element);
+                }
             } else {
-                child.insert_into_non_full_node(sub_index, element);
+                child.insert_into_non_full_node(sub_index, element)?;
             }
             self.length += 1;
+            Ok(())
+        } else {
+            Err(element)
         }
     }
 
@@ -645,13 +655,13 @@ mod tests {
     fn insert() {
         let mut t = BTreeList::new();
 
-        t.insert(0, ());
-        t.insert(1, ());
-        t.insert(0, ());
-        t.insert(0, ());
-        t.insert(0, ());
-        t.insert(3, ());
-        t.insert(4, ());
+        t.insert(0, ()).unwrap();
+        t.insert(1, ()).unwrap();
+        t.insert(0, ()).unwrap();
+        t.insert(0, ()).unwrap();
+        t.insert(0, ()).unwrap();
+        t.insert(3, ()).unwrap();
+        t.insert(4, ()).unwrap();
     }
 
     #[test]
@@ -659,7 +669,7 @@ mod tests {
         let mut t = BTreeList::new();
 
         for i in 0..100 {
-            t.insert(i % 2, ());
+            t.insert(i % 2, ()).unwrap();
         }
     }
 
@@ -669,7 +679,7 @@ mod tests {
         let mut v = Vec::new();
 
         for i in 0..100 {
-            t.insert(i % 3, ());
+            t.insert(i % 3, ()).unwrap();
             v.insert(i % 3, ());
 
             assert_eq!(v, t.iter().copied().collect::<Vec<_>>())
@@ -761,6 +771,14 @@ mod tests {
         assert_eq!(t.remove(1), None);
         t.push(1);
         assert_eq!(t.remove(0), Some(1));
+    }
+
+    #[test]
+    fn insert_no_panic() {
+        let mut t = BTreeList::new();
+        assert_eq!(t.insert(10, 1), Err(1));
+        assert_eq!(t.insert(1, 1), Err(1));
+        assert_eq!(t.insert(0, 1), Ok(()));
     }
 
     #[cfg(release)]
