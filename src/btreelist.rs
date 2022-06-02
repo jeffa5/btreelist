@@ -7,26 +7,24 @@ use std::{
 
 use crate::{Iter, OwnedIter};
 
-const B: usize = 6;
-
 /// A list with efficient insert and removal in the middle.
 ///
 /// It may be worth benchmarking your use case and trying to use a [`Box<T>`](Box) instead of a plain `T`
 /// as this can improve performance in some cases.
 /// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).
 #[derive(Clone, Debug)]
-pub struct BTreeList<T> {
-    root_node: Option<BTreeListNode<T>>,
+pub struct BTreeList<T, const B: usize = 6> {
+    root_node: Option<BTreeListNode<T, B>>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
-struct BTreeListNode<T> {
+struct BTreeListNode<T, const B: usize> {
     elements: Vec<T>,
-    children: Vec<BTreeListNode<T>>,
+    children: Vec<BTreeListNode<T, B>>,
     length: usize,
 }
 
-impl<T> BTreeList<T> {
+impl<T, const B: usize> BTreeList<T, B> {
     /// Construct a new, empty, list.
     pub fn new() -> Self {
         Self { root_node: None }
@@ -43,7 +41,7 @@ impl<T> BTreeList<T> {
     }
 
     /// Create an iterator through the list.
-    pub fn iter(&self) -> Iter<'_, T> {
+    pub fn iter(&self) -> Iter<'_, T, B> {
         Iter {
             inner: self,
             index: 0,
@@ -207,7 +205,7 @@ impl<T> BTreeList<T> {
     }
 }
 
-impl<T> BTreeListNode<T> {
+impl<T, const B: usize> BTreeListNode<T, B> {
     fn new() -> Self {
         Self {
             elements: Vec::new(),
@@ -490,7 +488,7 @@ impl<T> BTreeListNode<T> {
         }
     }
 
-    fn merge(&mut self, middle: T, successor_sibling: BTreeListNode<T>) {
+    fn merge(&mut self, middle: T, successor_sibling: BTreeListNode<T, B>) {
         self.elements.push(middle);
         self.elements.extend(successor_sibling.elements);
         self.children.extend(successor_sibling.children);
@@ -583,10 +581,10 @@ where
     }
 }
 
-impl<'a, T> IntoIterator for &'a BTreeList<T> {
+impl<'a, T, const B: usize> IntoIterator for &'a BTreeList<T, B> {
     type Item = &'a T;
 
-    type IntoIter = Iter<'a, T>;
+    type IntoIter = Iter<'a, T, B>;
 
     fn into_iter(self) -> Self::IntoIter {
         Iter {
@@ -597,10 +595,10 @@ impl<'a, T> IntoIterator for &'a BTreeList<T> {
     }
 }
 
-impl<T> IntoIterator for BTreeList<T> {
+impl<T, const B: usize> IntoIterator for BTreeList<T, B> {
     type Item = T;
 
-    type IntoIter = OwnedIter<T>;
+    type IntoIter = OwnedIter<T, B>;
 
     fn into_iter(self) -> Self::IntoIter {
         OwnedIter { inner: self }
@@ -646,7 +644,7 @@ mod tests {
 
     #[test]
     fn push_back() {
-        let mut t = BTreeList::new();
+        let mut t = BTreeList::default();
 
         t.push_back(());
         t.push_back(());
@@ -660,7 +658,7 @@ mod tests {
 
     #[test]
     fn insert() {
-        let mut t = BTreeList::new();
+        let mut t = BTreeList::default();
 
         t.insert(0, ()).unwrap();
         t.insert(1, ()).unwrap();
@@ -673,7 +671,7 @@ mod tests {
 
     #[test]
     fn insert_book() {
-        let mut t = BTreeList::new();
+        let mut t = BTreeList::default();
 
         for i in 0..100 {
             t.insert(i % 2, ()).unwrap();
@@ -682,7 +680,7 @@ mod tests {
 
     #[test]
     fn insert_book_vec() {
-        let mut t = BTreeList::new();
+        let mut t = BTreeList::default();
         let mut v = Vec::new();
 
         for i in 0..100 {
@@ -695,7 +693,7 @@ mod tests {
 
     #[test]
     fn iter_forth_back() {
-        let mut t = BTreeList::new();
+        let mut t = BTreeList::default();
 
         t.push_back(1);
         t.push_back(2);
@@ -738,7 +736,7 @@ mod tests {
 
     #[test]
     fn first_last() {
-        let mut t = BTreeList::new();
+        let mut t = BTreeList::default();
         t.push_back(1);
         t.push_back(2);
         t.push_back(3);
@@ -751,7 +749,7 @@ mod tests {
 
     #[test]
     fn pop() {
-        let mut t = BTreeList::new();
+        let mut t = BTreeList::default();
 
         t.push_back(1);
         t.push_back(2);
@@ -765,7 +763,7 @@ mod tests {
 
     #[test]
     fn set_no_panic() {
-        let mut t = BTreeList::new();
+        let mut t = BTreeList::default();
         assert_eq!(t.set(0, 1), Err(1));
         t.push(1);
         assert_eq!(t.set(0, 2), Ok(1));
@@ -773,7 +771,7 @@ mod tests {
 
     #[test]
     fn remove_no_panic() {
-        let mut t = BTreeList::new();
+        let mut t = BTreeList::default();
         assert_eq!(t.remove(0), None);
         assert_eq!(t.remove(1), None);
         t.push(1);
@@ -782,11 +780,32 @@ mod tests {
 
     #[test]
     fn insert_no_panic() {
-        let mut t = BTreeList::new();
+        let mut t = BTreeList::default();
         assert_eq!(t.insert(10, 1), Err(1));
         assert_eq!(t.insert(1, 1), Err(1));
         assert_eq!(t.insert(0, 1), Ok(()));
         assert_eq!(t.insert(10, 1), Err(1));
+    }
+
+    #[test]
+    fn generic_b() {
+        fn push_a_few<const B: usize>(mut t: BTreeList<usize, B>) {
+            t.push(1);
+            t.push(2);
+            t.push(3);
+        }
+
+        let t: BTreeList<usize> = BTreeList::new();
+        let t6: BTreeList<usize, 6> = BTreeList::new();
+        let t3: BTreeList<usize, 3> = BTreeList::new();
+        let t7: BTreeList<usize, 7> = BTreeList::new();
+        let t32: BTreeList<usize, 32> = BTreeList::new();
+
+        push_a_few(t);
+        push_a_few(t6);
+        push_a_few(t3);
+        push_a_few(t7);
+        push_a_few(t32);
     }
 
     #[cfg(release)]
