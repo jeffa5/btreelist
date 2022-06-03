@@ -37,6 +37,11 @@
 <span id="32">32</span>
 <span id="33">33</span>
 <span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">forbid</span>(<span class="ident">unsafe_code</span>)]</span>
 <span class="attribute">#![<span class="ident">warn</span>(
     <span class="ident">missing_debug_implementations</span>,
@@ -61,7 +66,12 @@
     <span class="ident">while_true</span>
 )]</span>
 
-<span class="doccomment">//! See [`BTreeList`].</span>
+<span class="doccomment">//! A tree-based list with heap-allocated contents.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! A BTreeList offers O(log(n)) indexing, O(log(n)) insertion (anywhere in the list) and</span>
+<span class="doccomment">//! O(log(n)) removal (also anywhere in the list).</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! See [`BTreeList`] for more details.</span>
 
 <span class="kw">mod</span> <span class="ident">btreelist</span>;
 <span class="kw">mod</span> <span class="ident">iter</span>;
