@@ -25,22 +25,59 @@ struct BTreeListNode<T, const B: usize> {
 }
 
 impl<T, const B: usize> BTreeList<T, B> {
-    /// Construct a new, empty, list.
+    /// Construct a new, empty [`BTreeList`].
+    ///
+    /// No allocation occurs until elements are added.
+    ///
+    /// ```
+    /// # use btreelist::BTreeList;
+    /// // create a BTreeList with the default B parameter
+    /// let mut list : BTreeList<i32> = BTreeList::new();
+    /// // create a BTreeList with a custom B parameter
+    /// let mut list : BTreeList<i32, 32> = BTreeList::new();
+    /// ```
     pub fn new() -> Self {
         Self { root_node: None }
     }
 
     /// Get the length of the list.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let list = btreelist![1, 2, 3];
+    /// assert_eq!(list.len(), 3);
+    /// ```
     pub fn len(&self) -> usize {
         self.root_node.as_ref().map_or(0, |n| n.len())
     }
 
     /// Check if the list is empty.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// # use btreelist::BTreeList;
+    /// let mut list: BTreeList<_> = BTreeList::new();
+    /// assert!(list.is_empty());
+    ///
+    /// list.push(1);
+    /// assert!(!list.is_empty());
+    /// ```
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
     /// Create an iterator through the list.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let x = btreelist![1, 2, 4];
+    /// let mut iterator = x.iter();
+    ///
+    /// assert_eq!(iterator.next(), Some(&1));
+    /// assert_eq!(iterator.next(), Some(&2));
+    /// assert_eq!(iterator.next(), Some(&4));
+    /// assert_eq!(iterator.next(), None);
+    /// ```
     pub fn iter(&self) -> Iter<'_, T, B> {
         Iter {
             inner: self,
@@ -51,6 +88,15 @@ impl<T, const B: usize> BTreeList<T, B> {
 
     /// Insert the `element` into the list at `index`. Returns the element to be inserted if the
     /// index is out of bounds.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let mut list = btreelist![1, 2, 3];
+    /// list.insert(1, 4);
+    /// assert_eq!(list, btreelist![1, 4, 2, 3]);
+    /// list.insert(4, 5);
+    /// assert_eq!(list, btreelist![1, 4, 2, 3, 5]);
+    /// ```
     pub fn insert(&mut self, index: usize, element: T) -> Result<(), T> {
         let old_len = self.len();
         if index > old_len {
@@ -101,11 +147,25 @@ impl<T, const B: usize> BTreeList<T, B> {
     }
 
     /// Push the `element` onto the back of the list.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let mut list = btreelist![1, 2];
+    /// list.push(3);
+    /// assert_eq!(list, btreelist![1, 2, 3]);
+    /// ```
     pub fn push(&mut self, element: T) {
         self.push_back(element)
     }
 
     /// Push the `element` onto the back of the list.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let mut list = btreelist![1, 2];
+    /// list.push_back(3);
+    /// assert_eq!(list, btreelist![1, 2, 3]);
+    /// ```
     pub fn push_back(&mut self, element: T) {
         let l = self.len();
         // SAFETY: can always push onto the end of a list
@@ -113,17 +173,38 @@ impl<T, const B: usize> BTreeList<T, B> {
     }
 
     /// Push the `element` onto the front of the list.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let mut list = btreelist![2, 3];
+    /// list.push_front(1);
+    /// assert_eq!(list, btreelist![1, 2, 3]);
+    /// ```
     pub fn push_front(&mut self, element: T) {
         // SAFETY: can always push onto the start of a list
         let _ = self.insert(0, element);
     }
 
     /// Remove and return the last element from the list, if there is one.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let mut list = btreelist![1, 2, 3];
+    /// assert_eq!(list.pop(), Some(3));
+    /// assert_eq!(list, btreelist![1, 2]);
+    /// ```
     pub fn pop(&mut self) -> Option<T> {
         self.pop_back()
     }
 
     /// Remove and return the last element from the list, if there is one.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let mut list = btreelist![1, 2, 3];
+    /// assert_eq!(list.pop_back(), Some(3));
+    /// assert_eq!(list, btreelist![1, 2]);
+    /// ```
     pub fn pop_back(&mut self) -> Option<T> {
         if !self.is_empty() {
             self.remove(self.len() - 1)
@@ -133,6 +214,13 @@ impl<T, const B: usize> BTreeList<T, B> {
     }
 
     /// Remove and return the first element from the list, if there is one.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let mut list = btreelist![1, 2, 3];
+    /// assert_eq!(list.pop_front(), Some(1));
+    /// assert_eq!(list, btreelist![2, 3]);
+    /// ```
     pub fn pop_front(&mut self) -> Option<T> {
         if !self.is_empty() {
             self.remove(0)
@@ -141,37 +229,14 @@ impl<T, const B: usize> BTreeList<T, B> {
         }
     }
 
-    /// Get the `element` at `index` in the list.
-    pub fn get(&self, index: usize) -> Option<&T> {
-        self.root_node.as_ref().and_then(|n| n.get(index))
-    }
-
-    /// Get the and `element` at `index` in the list.
-    pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
-        self.root_node.as_mut().and_then(|n| n.get_mut(index))
-    }
-
-    /// Get the first element in the list if it exists.
-    pub fn first(&self) -> Option<&T> {
-        self.get(0)
-    }
-
-    /// Get the first element in the list if it exists.
-    pub fn first_mut(&mut self) -> Option<&mut T> {
-        self.get_mut(0)
-    }
-
-    /// Get the last element in the list if it exists.
-    pub fn last(&self) -> Option<&T> {
-        self.get(self.len() - 1)
-    }
-
-    /// Get the last element in the list if it exists.
-    pub fn last_mut(&mut self) -> Option<&mut T> {
-        self.get_mut(self.len() - 1)
-    }
-
     /// Removes the element at `index` from the list if it exists.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let mut list = btreelist![1, 2, 3];
+    /// assert_eq!(list.remove(1), Some(2));
+    /// assert_eq!(list, btreelist![1, 3]);
+    /// ```
     pub fn remove(&mut self, index: usize) -> Option<T> {
         if let Some(root) = self.root_node.as_mut() {
             #[cfg(debug_assertions)]
@@ -196,12 +261,95 @@ impl<T, const B: usize> BTreeList<T, B> {
 
     /// Update the `element` at `index` in the list, returning the old value on success, or the
     /// given value when the index is out of bounds.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let mut list = btreelist![1, 2, 3];
+    /// list.set(1, 4);
+    /// assert_eq!(list, btreelist![1, 4, 3]);
+    /// ```
     pub fn set(&mut self, index: usize, element: T) -> Result<T, T> {
         if let Some(node) = self.root_node.as_mut() {
             node.set(index, element)
         } else {
             Err(element)
         }
+    }
+
+    /// Get the `element` at `index` in the list.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let list = btreelist![10, 40, 30];
+    /// assert_eq!(list.get(1), Some(&40));
+    /// assert_eq!(list.get(3), None);
+    /// ```
+    pub fn get(&self, index: usize) -> Option<&T> {
+        self.root_node.as_ref().and_then(|n| n.get(index))
+    }
+
+    /// Get the and `element` at `index` in the list.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let list = &mut btreelist![0, 1, 2];
+    /// if let Some(elem) = list.get_mut(1) {
+    ///     *elem = 42;
+    /// }
+    /// assert_eq!(*list, btreelist![0, 42, 2]);
+    /// ```
+    pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
+        self.root_node.as_mut().and_then(|n| n.get_mut(index))
+    }
+
+    /// Get the first element in the list if it exists.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let list = btreelist![10, 40, 30];
+    /// assert_eq!(list.first(), Some(&10));
+    /// ```
+    pub fn first(&self) -> Option<&T> {
+        self.get(0)
+    }
+
+    /// Get the first element in the list if it exists.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let list = &mut btreelist![0, 1, 2];
+    /// if let Some(elem) = list.first_mut() {
+    ///     *elem = 42;
+    /// }
+    /// assert_eq!(*list, btreelist![42, 1, 2]);
+    /// ```
+    pub fn first_mut(&mut self) -> Option<&mut T> {
+        self.get_mut(0)
+    }
+
+    /// Get the last element in the list if it exists.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let list = btreelist![10, 40, 30];
+    /// assert_eq!(list.last(), Some(&30));
+    /// ```
+    pub fn last(&self) -> Option<&T> {
+        self.get(self.len() - 1)
+    }
+
+    /// Get the last element in the list if it exists.
+    ///
+    /// ```
+    /// # use btreelist::btreelist;
+    /// let list = &mut btreelist![0, 1, 2];
+    /// if let Some(elem) = list.last_mut() {
+    ///     *elem = 42;
+    /// }
+    /// assert_eq!(*list, btreelist![0, 1, 42]);
+    /// ```
+    pub fn last_mut(&mut self) -> Option<&mut T> {
+        self.get_mut(self.len() - 1)
     }
 }
 
