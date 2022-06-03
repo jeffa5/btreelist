@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `btreelist` macro [#8](https://github.com/jeffa5/btreelist/pull/8)
+- `swap` function to swap two indices [#10](https://github.com/jeffa5/btreelist/pull/10)
 
 ### Changed
 

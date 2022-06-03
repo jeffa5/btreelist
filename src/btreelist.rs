@@ -262,10 +262,13 @@ impl<T, const B: usize> BTreeList<T, B> {
     /// assert_eq!(list, btreelist![1, 3]);
     /// ```
     pub fn remove(&mut self, index: usize) -> Option<T> {
+        if index >= self.len() {
+            return None;
+        }
         if let Some(root) = self.root_node.as_mut() {
             #[cfg(debug_assertions)]
             let len = root.check();
-            let old = root.remove(index);
+            let old = root.remove(index)?;
 
             if root.elements.is_empty() {
                 if root.is_leaf() {
@@ -277,7 +280,7 @@ impl<T, const B: usize> BTreeList<T, B> {
 
             #[cfg(debug_assertions)]
             debug_assert_eq!(len, self.root_node.as_ref().map_or(0, |r| r.check()) + 1);
-            old
+            Some(old)
         } else {
             None
         }
@@ -298,6 +301,37 @@ impl<T, const B: usize> BTreeList<T, B> {
         } else {
             Err(element)
         }
+    }
+
+    /// Returns whether the swap was successful.
+    pub fn swap(&mut self, a: usize, b: usize) -> bool {
+        if a > b {
+            self.swap_inner(b, a)
+        } else {
+            self.swap_inner(a, b)
+        }
+    }
+
+    /// Swap two elements, assumes `a <= b`.
+    /// Returns whether the swap was successful.
+    fn swap_inner(&mut self, a: usize, b: usize) -> bool {
+        assert!(a <= b);
+
+        let b_elt = match self.remove(b) {
+            Some(elt) => elt,
+            None => return false,
+        };
+        let a_elt = match self.set(a, b_elt) {
+            Ok(old) => old,
+            Err(_) => unreachable!("set at a lesser index than swap"),
+        };
+        match self.insert(b, a_elt) {
+            Ok(()) => {}
+            Err(_) => {
+                unreachable!("insert at a previously removed place")
+            }
+        };
+        true
     }
 
     /// Get the `element` at `index` in the list.
@@ -812,6 +846,8 @@ impl<T> IndexMut<usize> for BTreeList<T> {
 #[cfg(test)]
 mod tests {
 
+    use crate::btreelist;
+
     use super::*;
 
     #[test]
@@ -978,6 +1014,26 @@ mod tests {
         push_a_few(t3);
         push_a_few(t7);
         push_a_few(t32);
+    }
+
+    #[test]
+    fn swap() {
+        let mut t = BTreeList::default();
+
+        t.push(1);
+        t.push(2);
+        t.push(3);
+
+        t.swap(0, 2);
+        assert_eq!(t, btreelist![3, 2, 1]);
+        t.swap(2, 0);
+        assert_eq!(t, btreelist![1, 2, 3]);
+        t.swap(1, 0);
+        assert_eq!(t, btreelist![2, 1, 3]);
+        t.swap(0, 1);
+        assert_eq!(t, btreelist![1, 2, 3]);
+        assert!(!t.swap(0, 4));
+        assert!(!t.swap(5, 4));
     }
 
     #[cfg(release)]
