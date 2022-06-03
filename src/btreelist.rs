@@ -12,6 +12,30 @@ use crate::{Iter, OwnedIter};
 /// It may be worth benchmarking your use case and trying to use a [`Box<T>`](Box) instead of a plain `T`
 /// as this can improve performance in some cases.
 /// Similar word-length wrapper types would also work e.g. [`Rc`](std::rc::Rc).
+///
+/// ```
+/// # use btreelist::BTreeList;
+/// # use btreelist::btreelist;
+/// let mut list = BTreeList::default();
+/// list.push(1);
+/// list.push(2);
+///
+/// assert_eq!(list.len(), 2);
+/// assert_eq!(list[0], 1);
+///
+/// assert_eq!(list.pop(), Some(2));
+/// assert_eq!(list.len(), 1);
+///
+/// list[0] = 7;
+/// assert_eq!(list[0], 7);
+///
+/// list.extend([1,2,3]);
+///
+/// for x in &list {
+///     println!("{x}");
+/// }
+/// assert_eq!(list, btreelist![7, 1, 2, 3]);
+/// ```
 #[derive(Clone, Debug)]
 pub struct BTreeList<T, const B: usize = 6> {
     root_node: Option<BTreeListNode<T, B>>,
