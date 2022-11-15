@@ -1,3 +1,3 @@
-(function() {var implementors = {};
-implementors["btreelist"] = [{"text":"impl&lt;T&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.61.0/core/ops/index/trait.IndexMut.html\" title=\"trait core::ops::index::IndexMut\">IndexMut</a>&lt;<a class=\"primitive\" href=\"https://doc.rust-lang.org/1.61.0/std/primitive.usize.html\">usize</a>&gt; for <a class=\"struct\" href=\"btreelist/struct.BTreeList.html\" title=\"struct btreelist::BTreeList\">BTreeList</a>&lt;T&gt;","synthetic":false,"types":["btreelist::btreelist::BTreeList"]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
+(function() {var implementors = {
+"btreelist":[["impl&lt;T&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.65.0/core/ops/index/trait.IndexMut.html\" title=\"trait core::ops::index::IndexMut\">IndexMut</a>&lt;<a class=\"primitive\" href=\"https://doc.rust-lang.org/1.65.0/std/primitive.usize.html\">usize</a>&gt; for <a class=\"struct\" href=\"btreelist/struct.BTreeList.html\" title=\"struct btreelist::BTreeList\">BTreeList</a>&lt;T&gt;"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
