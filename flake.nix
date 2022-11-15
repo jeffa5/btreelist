@@ -7,55 +7,75 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     rust-overlay.url = "github:oxalica/rust-overlay";
+    crane.url = "github:ipetkov/crane";
+    crane.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, flake-utils, rust-overlay }:
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+    rust-overlay,
+    crane,
+  }:
     flake-utils.lib.eachDefaultSystem
-      (system:
-        let
-          pkgs = import nixpkgs {
-            overlays = [ rust-overlay.overlay ];
-            inherit system;
-          };
-          lib = pkgs.lib;
-          rust = pkgs.rust-bin.stable.latest.default;
-          cargoNix = import ./Cargo.nix {
-            inherit pkgs;
-            release = true;
-          };
-          debugCargoNix = import ./Cargo.nix {
-            inherit pkgs;
-            release = false;
-          };
-        in
-        {
-          packages = lib.attrsets.mapAttrs
-            (name: value: value.build)
-            cargoNix.workspaceMembers;
-
-          defaultPackage = self.packages.${system}.btreelist;
-
-          checks = lib.attrsets.mapAttrs
-            (name: value: value.build.override {
-              runTests = true;
-            })
-            debugCargoNix.workspaceMembers;
-
-          devShell = pkgs.mkShell {
-            buildInputs = with pkgs; [
-              (rust.override {
-                extensions = [ "rust-src" ];
-              })
-              cargo-edit
-              cargo-watch
-              cargo-criterion
-              cargo-fuzz
-              cargo-flamegraph
-              crate2nix
-
-              rnix-lsp
-              nixpkgs-fmt
-            ];
-          };
+    (system: let
+      pkgs = import nixpkgs {
+        overlays = [rust-overlay.overlays.default];
+        inherit system;
+      };
+      lib = pkgs.lib;
+      rust = pkgs.rust-bin.stable.latest.default;
+      craneLib = crane.lib.${system};
+      commonArgs = {
+        src = craneLib.cleanCargoSource ./.;
+      };
+      cargoArtifacts = craneLib.buildDepsOnly (commonArgs
+        // {
+          pname = "btreelist-deps";
         });
+      clippy = craneLib.cargoClippy (commonArgs
+        // {
+          inherit cargoArtifacts;
+        });
+      crate = craneLib.buildPackage (commonArgs
+        // {
+          inherit cargoArtifacts;
+        });
+      coverage = craneLib.cargoTarpaulin (commonArgs
+        // {
+          inherit cargoArtifacts;
+        });
+    in {
+      packages = {
+        default = crate;
+        btreelist = crate;
+        clippy = clippy;
+        coverage = coverage;
+      };
+
+      checks = {
+        btreelist = self.packages.${system}.btreelist;
+        clippy = clippy;
+        coverage = coverage;
+      };
+
+      formatter = pkgs.alejandra;
+
+      devShell = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          (rust.override {
+            extensions = ["rust-src"];
+          })
+          cargo-edit
+          cargo-watch
+          cargo-criterion
+          cargo-fuzz
+          cargo-flamegraph
+
+          rnix-lsp
+          nixpkgs-fmt
+        ];
+      };
+    });
 }
