@@ -429,7 +429,12 @@ impl<T, const B: usize> BTreeListNode<T, B> {
     }
 
     fn is_full(&self) -> bool {
-        self.elements.len() >= 2 * B - 1
+        let max = 2 * B - 1;
+        assert!(
+            self.elements.len() <= max,
+            "node shouldn't be over full-size"
+        );
+        self.elements.len() == max
     }
 
     /// Returns the child index and the given index adjusted for the cumulative index before that
