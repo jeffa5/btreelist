@@ -1,7 +1,7 @@
 use crate::BTreeList;
 
 /// An iterator over items in a [`BTreeList`].
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Iter<'a, T, const B: usize> {
     pub(crate) inner: &'a BTreeList<T, B>,
     pub(crate) index: usize,
