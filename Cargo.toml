@@ -1,6 +1,6 @@
 [package]
 name = "btreelist"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2018"
 license = "MIT"
 description = "A list data structure that has efficient insertion and removal in the middle."

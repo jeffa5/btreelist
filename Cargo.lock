@@ -63,7 +63,7 @@ dependencies = [
 
 [[package]]
 name = "btreelist"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "btree-vec",
  "criterion",
