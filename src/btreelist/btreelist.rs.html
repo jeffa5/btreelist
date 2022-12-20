@@ -1107,6 +1107,11 @@
 <span id="1107">1107</span>
 <span id="1108">1108</span>
 <span id="1109">1109</span>
+<span id="1110">1110</span>
+<span id="1111">1111</span>
+<span id="1112">1112</span>
+<span id="1113">1113</span>
+<span id="1114">1114</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::{
     cmp::{min, Ordering},
     iter::FromIterator,
@@ -1538,8 +1543,13 @@
     }
 
     <span class="kw">fn </span>is_full(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.elements.len() &gt;= <span class="number">2 </span>* B - <span class="number">1
-    </span>}
+        <span class="kw">let </span>max = <span class="number">2 </span>* B - <span class="number">1</span>;
+        <span class="macro">assert!</span>(
+            <span class="self">self</span>.elements.len() &lt;= max,
+            <span class="string">&quot;node shouldn&#39;t be over full-size&quot;
+        </span>);
+        <span class="self">self</span>.elements.len() == max
+    }
 
     <span class="doccomment">/// Returns the child index and the given index adjusted for the cumulative index before that
     /// child.
