@@ -23,3 +23,6 @@ paste = "1.0.7" # for benchmark macros
 [[bench]]
 name = "vec"
 harness = false
+
+[profile.bench]
+debug = true
