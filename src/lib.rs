@@ -23,8 +23,8 @@
 
 //! A tree-based list with heap-allocated contents.
 //!
-//! A BTreeList offers O(log(n)) indexing, O(log(n)) insertion (anywhere in the list) and
-//! O(log(n)) removal (also anywhere in the list).
+//! A BTreeList offers `O(log(n))` indexing, `O(log(n))` insertion (anywhere in the list) and
+//! `O(log(n))` removal (also anywhere in the list).
 //!
 //! See [`BTreeList`] for more details.
 
