@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":[["btreelist","Create a `BTreeList`."]],"struct":[["BTreeList","A list with efficient insert and removal in the middle."],["Iter","An iterator over items in a [`BTreeList`]."],["OwnedIter","An iterator over items in a [`BTreeList`]."]]};
+window.SIDEBAR_ITEMS = {"macro":["btreelist"],"struct":["BTreeList","Iter","OwnedIter"]};
