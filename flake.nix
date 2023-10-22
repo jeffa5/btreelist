@@ -2,11 +2,11 @@
   description = "BTreeList";
 
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils = {
       url = "github:numtide/flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    rust-overlay.url = "github:oxalica/rust-overlay";
     crane.url = "github:ipetkov/crane";
     crane.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -15,17 +15,13 @@
     self,
     nixpkgs,
     flake-utils,
-    rust-overlay,
     crane,
   }:
     flake-utils.lib.eachDefaultSystem
     (system: let
       pkgs = import nixpkgs {
-        overlays = [rust-overlay.overlays.default];
         inherit system;
       };
-      lib = pkgs.lib;
-      rust = pkgs.rust-bin.stable.latest.default;
       craneLib = crane.lib.${system};
       commonArgs = {
         src = craneLib.cleanCargoSource ./.;
@@ -64,17 +60,14 @@
 
       devShell = pkgs.mkShell {
         buildInputs = with pkgs; [
-          (rust.override {
-            extensions = ["rust-src"];
-          })
+          rustc
+          cargo
           cargo-edit
           cargo-watch
           cargo-criterion
           cargo-fuzz
           cargo-flamegraph
-
-          rnix-lsp
-          nixpkgs-fmt
+          cargo-outdated
         ];
       };
     });
