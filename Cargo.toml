@@ -15,10 +15,10 @@ exclude = ["/scripts", "/Cargo.nix", "/flake.*", "/.envrc", "/.github"]
 [dependencies]
 
 [dev-dependencies]
-proptest = "1.0.0"
-criterion = "0.3" # for benchmarks
-btree-vec = "0.2.3" # for comparison
-paste = "1.0.7" # for benchmark macros
+proptest = "1.3.1"
+criterion = "0.5" # for benchmarks
+btree-vec = "0.3.1" # for comparison
+paste = "1.0.14" # for benchmark macros
 
 [[bench]]
 name = "vec"
